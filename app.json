@@ -17,7 +17,8 @@
         "foregroundImage": "./assets/images/logo.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.joenash156.kasa"
     },
     "web": {
       "output": "static",
@@ -41,6 +42,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "6762fd38-885e-4ff3-b583-bfcb646205e4"
+      }
     }
   }
 }

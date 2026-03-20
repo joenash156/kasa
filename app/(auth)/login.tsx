@@ -19,7 +19,7 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
 
   const phoneDigits = phoneNumber.replace(/\D/g, '');
-  const canSendOtp = phoneDigits.length >= 10;
+  const canSendOtp = phoneDigits.length >= 9;
   const canVerifyOtp = otpCode.length === 6;
   const sendButtonEnabled = canSendOtp && !loading;
   const verifyButtonEnabled = canVerifyOtp && !loading;
@@ -126,7 +126,7 @@ export default function LoginScreen() {
             <Text className="mb-8 text-base font-medium text-gray-600 leading-relaxed text-center">
               {step === 'phone'
                 ? 'We\'ll send a verification code to your phone number'
-                : `Sent to +${phoneNumber}`}
+                : `Sent to +233${phoneNumber}`}
             </Text>
 
             {/* Form Section */}
@@ -222,7 +222,7 @@ export default function LoginScreen() {
                     <View className="flex-row items-center gap-3">
                       <Ionicons name="shield-checkmark" size={20} color="#EA580C" />
                       <TextInput
-                        placeholder="000000"
+                        placeholder="******"
                         placeholderTextColor="#D1D5DB"
                         keyboardType="number-pad"
                         maxLength={6}
@@ -235,14 +235,14 @@ export default function LoginScreen() {
                     </View>
 
                     {/* OTP Visual Indicators */}
-                    <View className="flex-row gap-2 justify-center">
+                    {/* <View className="flex-row gap-2 justify-center">
                       {[0, 1, 2, 3, 4, 5].map((i) => (
                         <View
                           key={i}
                           className={`w-3.5 h-3.5 rounded-full ${i < otpCode.length ? 'bg-orange-500' : 'bg-gray-300'}`}
                         />
                       ))}
-                    </View>
+                    </View> */}
                   </View>
 
                   {/* Helper Text */}
