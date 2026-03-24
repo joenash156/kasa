@@ -1,5 +1,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
+import { getThemeColors } from "@/theme/colors";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -15,11 +16,15 @@ export default function SettingsScreen() {
   const { theme, toggleTheme } = useTheme();
 
   const isDarkMode = theme === "dark";
-  const bgColor = isDarkMode ? "bg-gray-900" : "bg-gray-50";
-  const cardBg = isDarkMode ? "bg-gray-800" : "bg-white";
-  const textColor = isDarkMode ? "text-white" : "text-gray-700";
-  const secondaryTextColor = isDarkMode ? "text-gray-400" : "text-gray-600";
-  const borderColor = isDarkMode ? "border-gray-800" : "border-gray-50";
+  const colors = getThemeColors(isDarkMode);
+  const {
+    bg: bgColor,
+    card: cardBg,
+    text: textColor,
+    textSecondary: secondaryTextColor,
+    border: borderColor,
+    iconPrimary,
+  } = colors;
 
   const handleLogout = () => {
     logout();
@@ -132,7 +137,7 @@ export default function SettingsScreen() {
                   <Ionicons
                     name={isDarkMode ? "moon" : "sunny"}
                     size={20}
-                    color="#EA580C"
+                    color={iconPrimary}
                   />
                 </View>
                 <View>
@@ -273,7 +278,7 @@ export default function SettingsScreen() {
         {/* Footer */}
         <View className="px-3 pt-6">
           <Text className={`text-xs text-center ${secondaryTextColor}`}>
-            Made with ❤️ by {APP_NAME} Team
+            Made by {APP_NAME} Team
           </Text>
           <Text className={`text-xs text-center mt-1 ${secondaryTextColor}`}>
             © 2024-2026 All rights reserved

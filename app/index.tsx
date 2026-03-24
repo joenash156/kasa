@@ -1,4 +1,6 @@
 import Header from "@/components/Header";
+import { useTheme } from "@/context/ThemeContext";
+import { getThemeColors } from "@/theme/colors";
 import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -25,10 +27,23 @@ import Animated, {
 
 export default function Index() {
   const router = useRouter();
+  const { theme } = useTheme();
   const { width } = useWindowDimensions();
   const [yourNumber, setYourNumber] = useState("");
   const [friendNumber, setFriendNumber] = useState("");
   const mascotBounce = useSharedValue(0);
+
+  // Theme-responsive colors
+  const isDarkMode = theme === "dark";
+  const colors = getThemeColors(isDarkMode);
+  const {
+    bg: bgColor,
+    card: cardBg,
+    text: textColor,
+    textSecondary: secondaryTextColor,
+    border: borderColor,
+    bannerBg,
+  } = colors;
 
   const handleYourNumber = (text: string) => {
     setYourNumber(text.replace(/[^0-9]/g, ""));
@@ -66,16 +81,17 @@ export default function Index() {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
-        className="flex-1 bg-gray-50"
+        className={`flex-1 ${bgColor}`}
       >
         <ScrollView
-          className="flex-1 bg-gray-50"
+          className={`flex-1 ${bgColor}`}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
           contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
         >
           <View className="flex-1">
+            {/* Hero Section with Mascot */}
             <ImageBackground
               source={require("../assets/images/kasa-bg.png")}
               resizeMode="cover"
@@ -94,11 +110,14 @@ export default function Index() {
                   ]}
                   resizeMode="contain"
                 />
-                <View className="flex-row items-center gap-3 px-4 py-2 border border-orange-200 rounded-xl bg-orange-100 shadow-sm">
+                {/* Pro Feature Banner */}
+                <View
+                  className={`flex-row items-center gap-3 px-4 py-3 border rounded-xl ${borderColor} ${bannerBg} shadow-sm mt-4`}
+                >
                   <View className="h-9 w-9 items-center justify-center rounded-full bg-orange-100">
-                    <FontAwesome name="thumbs-o-up" size={18} color="#EA580C" />
+                    <FontAwesome name="thumbs-o-up" size={16} color="#EA580C" />
                   </View>
-                  <Text className="flex-1 text-sm font-semibold text-orange-900">
+                  <Text className={`flex-1 text-sm font-semibold ${textColor}`}>
                     No signup needed! Listen to a short ad and make free calls
                     instantly.
                   </Text>
@@ -106,34 +125,48 @@ export default function Index() {
               </Animated.View>
             </ImageBackground>
 
+            {/* Form Section */}
             <Animated.View
               entering={FadeInDown.duration(360).delay(50)}
-              className="bg-white mx-2 mt-3"
+              className={`${cardBg} mx-2 mt-6 rounded-2xl border ${borderColor} overflow-hidden shadow-sm`}
             >
-              <View className="bg-gray-50/90 py-3">
-                <Text className="text-xs font-semibold uppercase tracking-wide text-gray-700">
-                  Enter both numbers. We call you, play a quick ad, then connect
-                  you.
-                </Text>
+              {/* Form Header */}
+              <View
+                className={`border-b ${borderColor} px-4 py-3.5 bg-gradient-to-r ${isDarkMode ? "from-gray-700 to-gray-800" : "from-gray-50 to-gray-100"}`}
+              >
+                <View className="flex-row items-center gap-2">
+                  <Ionicons
+                    name="call-outline"
+                    size={16}
+                    color={colors.iconPrimary}
+                  />
+                  <Text
+                    className={`text-xs font-semibold uppercase tracking-wider ${secondaryTextColor}`}
+                  >
+                    Enter both numbers to make free calls
+                  </Text>
+                </View>
               </View>
 
-              <View className="py-2 bg-gray-50">
-                <View className="flex-row items-center gap-3 py-2">
-                  <View
-                    className="h-9 w-9 items-center justify-center bg-orange-100"
-                    style={{ borderRadius: 20 }}
-                  >
+              <View
+                className={`py-4 ${isDarkMode ? "bg-gray-800" : "bg-white"}`}
+              >
+                {/* Your Number Input */}
+                <View className={`flex-row items-center gap-3 px-4 py-3.5`}>
+                  <View className="h-10 w-10 items-center justify-center rounded-full bg-orange-100">
                     <Feather name="phone" size={16} color="#EA580C" />
                   </View>
-                  <View className="h-8 w-px bg-gray-200" />
-                  <Text className="text-lg font-semibold text-gray-800">
+                  <View className="h-8 w-px bg-gray-300" />
+                  <Text
+                    className={`text-base font-semibold ${colors.inputText}`}
+                  >
                     +233
                   </Text>
                   <TextInput
                     placeholder="Your number"
                     placeholderTextColor="#9CA3AF"
                     keyboardType="phone-pad"
-                    className="ml-2 flex-1 font-semibold text-gray-800"
+                    className={`ml-2 flex-1 font-semibold ${colors.inputText}`}
                     style={{ fontSize: 16 }}
                     value={yourNumber}
                     onChangeText={handleYourNumber}
@@ -141,24 +174,27 @@ export default function Index() {
                   />
                 </View>
 
-                <View className="mx-2 h-px bg-gray-200" />
+                {/* Divider */}
+                <View
+                  className={`mx-4 h-px ${isDarkMode ? "bg-gray-700" : "bg-gray-200"}`}
+                />
 
-                <View className="flex-row items-center gap-3 py-2">
-                  <View
-                    className="h-9 w-9 items-center justify-center bg-orange-100"
-                    style={{ borderRadius: 20 }}
-                  >
+                {/* Friend Number Input */}
+                <View className={`flex-row items-center gap-3 px-4 py-3.5`}>
+                  <View className="h-10 w-10 items-center justify-center rounded-full bg-orange-100">
                     <Feather name="user" size={16} color="#EA580C" />
                   </View>
-                  <View className="h-8 w-px bg-gray-200" />
-                  <Text className="text-lg font-semibold text-gray-800">
+                  <View className="h-8 w-px bg-gray-300" />
+                  <Text
+                    className={`text-base font-semibold ${colors.inputText}`}
+                  >
                     +233
                   </Text>
                   <TextInput
                     placeholder="Friend's number"
                     placeholderTextColor="#9CA3AF"
                     keyboardType="phone-pad"
-                    className="ml-2 flex-1 font-semibold text-gray-800"
+                    className={`ml-2 flex-1 font-semibold ${colors.inputText}`}
                     style={{ fontSize: 16 }}
                     value={friendNumber}
                     onChangeText={handleFriendNumber}
@@ -167,11 +203,16 @@ export default function Index() {
                 </View>
               </View>
 
-              <View className="pb-3 bg-gray-50">
+              {/* Call Button & Footer */}
+              <View
+                className={`px-4 py-4 border-t ${borderColor} ${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}
+              >
                 <TouchableOpacity
                   disabled={!canCall}
-                  activeOpacity={0.9}
-                  className={`w-full flex-row items-center justify-center gap-2 rounded-xl py-3.5 ${canCall ? "bg-teal-600" : "bg-gray-200"}`}
+                  activeOpacity={0.8}
+                  className={`w-full flex-row items-center justify-center gap-2 rounded-xl py-3.5 ${
+                    canCall ? "bg-orange-600" : "bg-gray-300"
+                  }`}
                 >
                   <Ionicons
                     name="call"
@@ -179,30 +220,37 @@ export default function Index() {
                     color={canCall ? "white" : "#9CA3AF"}
                   />
                   <Text
-                    className={`font-bold ${canCall ? "text-white" : "text-gray-500"}`}
+                    className={`font-bold text-base ${
+                      canCall ? "text-white" : "text-gray-500"
+                    }`}
                   >
                     Start Free Call
                   </Text>
                 </TouchableOpacity>
 
-                <Text className="mt-3 text-xs font-medium text-gray-600 text-center">
+                <Text
+                  className={`mt-3 text-xs font-medium text-center ${secondaryTextColor}`}
+                >
                   🇬🇭 Ghana only
                 </Text>
               </View>
             </Animated.View>
 
+            {/* Login Prompt */}
             <Animated.View
               entering={FadeInDown.duration(360).delay(110)}
-              className="mt-7 px-2"
+              className="mt-8 px-4"
             >
-              <Text className="text-sm text-gray-600 text-center">
-                Do you want to keep your call logs?{" "}
-                <Link href="/(auth)/login" asChild>
-                  <Text className="font-bold text-orange-600 underline">
-                    Login
-                  </Text>
-                </Link>
-              </Text>
+              <View
+                className={`border rounded-xl px-4 py-3 ${borderColor} ${isDarkMode ? "bg-gray-800" : "bg-orange-50"}`}
+              >
+                <Text className={`text-sm text-center ${secondaryTextColor}`}>
+                  Do you want to keep your call logs?{" "}
+                  <Link href="/(auth)/login" asChild>
+                    <Text className="font-semibold text-orange-600">Login</Text>
+                  </Link>
+                </Text>
+              </View>
             </Animated.View>
           </View>
         </ScrollView>
