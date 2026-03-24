@@ -153,7 +153,7 @@ export default function LoginScreen() {
                 <Animated.Text
                   className="mt-5 text-center text-3xl font-bold text-teal-800 leading-tight"
                 >
-                  {step === 'phone' ? 'Welcome to Kasa' : 'Verify your account'}
+                  {step === 'phone' ? 'Welcome back' : 'Verify your account'}
                 </Animated.Text>
               </Animated.View>
               <Animated.View style={animateSubtitle}>
