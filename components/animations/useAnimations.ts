@@ -5,6 +5,7 @@ import {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
+  withSpring,
   withTiming,
 } from "react-native-reanimated";
 
@@ -149,6 +150,39 @@ export const useBlobAnimation = (duration: number = 15000) => {
 
     return {
       transform: [{ scale }, { rotate: `${rotate}deg` }],
+    };
+  });
+
+  return animatedStyle;
+};
+
+/**
+ * Page load spring animation - for hero section text
+ * Animates elements upward with spring bounce on page load
+ */
+export const usePageLoadSpringAnimation = (delay: number = 0) => {
+  const animationValue = useSharedValue(0);
+
+  useEffect(() => {
+    setTimeout(() => {
+      animationValue.value = withSpring(1, {
+        damping: 20,
+        mass: 1,
+        stiffness: 100,
+        overshootClamping: false,
+        // restSpeedThreshold: 2,
+        // restDisplacementThreshold: 2,
+      });
+    }, delay);
+  }, [animationValue, delay]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const opacity = animationValue.value;
+    const translateY = interpolate(animationValue.value, [0, 1], [50, 0]);
+
+    return {
+      opacity,
+      transform: [{ translateY }],
     };
   });
 

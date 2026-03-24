@@ -1,28 +1,39 @@
 import { Feather, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
-  KeyboardAvoidingView,
   Image,
+  KeyboardAvoidingView,
   Platform,
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native';
+import Animated from 'react-native-reanimated';
+import { usePageLoadSpringAnimation } from '../../components/animations/useAnimations';
 
 export default function LoginScreen() {
+  const { height } = useWindowDimensions();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [otpCode, setOtpCode] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Animation hooks with staggered delays
+  const animateHeading = usePageLoadSpringAnimation(100);
+  const animateSubtitle = usePageLoadSpringAnimation(250);
+  const animateSecurityBadge = usePageLoadSpringAnimation(400);
 
   const phoneDigits = phoneNumber.replace(/\D/g, '');
   const canSendOtp = phoneDigits.length >= 9;
   const canVerifyOtp = otpCode.length === 6;
   const sendButtonEnabled = canSendOtp && !loading;
   const verifyButtonEnabled = canVerifyOtp && !loading;
+  const heroHeight = Math.max(280, Math.min(height * 0.46, 390));
 
   const handlePhoneChange = (text: string) => {
     // Keep digits only (we render the "+" prefix in the UI)
@@ -82,95 +93,137 @@ export default function LoginScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
-        className="flex-1"
+        className="flex-1 bg-gray-50"
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
       >
-        {/* Header with Logo/Brand */}
-        <View className="flex-1 justify-between pt-8 pb-8">
-          {/* Top Section */}
-          <View className="px-6">
-            {/* Animated Logo Icon */}
-            <View className="mb-12">
-              <View className="flex-col items-center gap-3 self-center">
-                <View className="h-16 w-16 items-center justify-center rounded-2xl ">
-                  <Image
-                    source={require('../../assets/images/logo.png')}
-                    style={{ width: 200, height: 200, borderRadius: 16 }}
-                    resizeMode="contain"
-                  />
-                </View>
-                <View className="flex-row items-center gap-2">
-                  <MaterialCommunityIcons name="phone-lock" size={14} color="#EA580C" />
-                  <Text className="text-xs font-semibold text-gray-600">Secure login</Text>
-                </View>
-              </View>
+        <View className="flex-1 pb-8">
+          {/* Hero Section */}
+          <View
+            style={{ height: heroHeight }}
+            className="px-6 pt-8 overflow-hidden"
+          >
+            <View
+              style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
+            >
+              <Image
+                source={require('../../assets/images/call-bg.png')}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  width: '100%',
+                  height: '100%',
+                  resizeMode: 'cover',
+                }}
+              />
+              <View
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                  bottom: 0,
+                  left: 0,
+                  backgroundColor: 'rgba(255, 255, 255, 0)',
+                }}
+              />
+              <LinearGradient
+                colors={['rgb(234, 90, 12)', 'rgba(242, 113, 43, 0.95)', 'rgba(249, 128, 63, 0.94)']}
+                start={{ x: 0.5, y: 0 }}
+                end={{ x: 0.5, y: 1 }}
+                style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
+              />
             </View>
 
-            {/* Step indicator (static) */}
-            <View className="mb-6">
-              <View className="flex-row items-center gap-2 rounded-full bg-orange-50 border border-orange-100 px-3 py-1.5 self-center">
+            <View className="items-center justify-center flex-1" style={{ position: 'relative' }}>
+              <View className="w-52 h-24 items-center justify-center">
+                <Image
+                  source={require('../../assets/images/logo-white.png')}
+                  style={{ width: "100%", height: "100%" }}
+                  resizeMode="contain"
+                // className='border'
+                />
+              </View>
+              <Animated.View style={animateSecurityBadge} className="mt-4 flex-row items-center gap-2">
+                <MaterialCommunityIcons name="phone-lock" size={15} color="#FFEDD5" />
+                <Text className="text-sm font-semibold text-orange-50">Secure login</Text>
+              </Animated.View>
+              <Animated.View style={animateHeading}>
+                <Animated.Text
+                  className="mt-5 text-center text-3xl font-bold text-teal-800 leading-tight"
+                >
+                  {step === 'phone' ? 'Welcome to Kasa' : 'Verify your account'}
+                </Animated.Text>
+              </Animated.View>
+              <Animated.View style={animateSubtitle}>
+                <Text className="mt-2 text-center text-sm font-medium text-teal-800">
+                  {step === 'phone'
+                    ? 'Sign in with your phone number to continue.'
+                    : `Enter the 6-digit code sent to +233${phoneNumber}`}
+                </Text>
+              </Animated.View>
+              <Animated.View style={animateSecurityBadge} className="mt-4 flex-row items-center gap-2 rounded-full bg-white/20 px-3 py-1.5 border border-white/30">
                 <Ionicons
                   name={step === 'phone' ? 'call-outline' : 'shield-checkmark'}
                   size={12}
-                  color="#EA580C"
+                  color="#FFFFFF"
                 />
-                <Text className="text-xs font-bold text-orange-700">
+                <Text className="text-xs font-semibold text-white">
                   {step === 'phone' ? 'Step 1 of 2' : 'Step 2 of 2'}
                 </Text>
-              </View>
+              </Animated.View>
             </View>
+          </View>
 
-            {/* Headline */}
-            <Text className="mb-2 text-3xl font-bold text-gray-900 leading-tight text-center">
-              {step === 'phone' ? 'Enter Your Phone' : 'Verify with OTP'}
-            </Text>
-
-            {/* Subheadline */}
-            <Text className="mb-8 text-base font-medium text-gray-600 leading-relaxed text-center">
-              {step === 'phone'
-                ? 'We will send a verification code to your phone number'
-                : `Sent to +233${phoneNumber}`}
-            </Text>
-
-            {/* Form Section */}
+          {/* Form Section */}
+          <View className="px-6 mt-6">
             {step === 'phone' ? (
               // PHONE NUMBER STEP
               <View className="gap-6">
                 {/* Phone Input Card */}
-                <View className="rounded-2xl border border-gray-200 bg-white">
+                <View className="bg-white">
                   {/* Input Header */}
-                  <View className="border-b border-gray-200 bg-gray-50 px-6 py-3">
-                    <Text className="text-xs font-bold uppercase tracking-wide text-gray-700">
+                  <View className="border-b flex-row gap-1 items-center border-gray-200 bg-gray-50/90 px-2 py-3">
+                    <Feather name="phone" size={15} color="#EA580C" />
+                    {/* <MaterialCommunityIcons name="cellphone-basic" size={20} color="#EA580C" /> */}
+                    <Text className="text-xs font-semibold uppercase tracking-wide text-gray-700">
                       Phone Number
                     </Text>
                   </View>
 
                   {/* Input Field */}
-                  <View className="flex-row items-center gap-3 px-6 py-4">
-                    <Feather name="phone" size={20} color="#EA580C" />
-                    <View className="flex-1 flex-row items-center">
-                      <Text className="text-lg font-semibold text-gray-600">+233</Text>
-                      <TextInput
-                        placeholder="XXX XXX XXXX"
-                        placeholderTextColor="#D1D5DB"
-                        keyboardType="phone-pad"
-                        style={{ fontSize: 15.5 }}
-                        className="ml-2 flex-1 font-semibold text-gray-600"
-                        value={phoneNumber}
-                        onChangeText={handlePhoneChange}
-                        maxLength={15}
-                        editable={!loading}
-                      />
-                    </View>
-                    {canSendOtp && (
-                      <View className="h-5 w-5 items-center justify-center rounded-full bg-emerald-500">
-                        <Feather name="check" size={14} color="white" />
+                  <View className="">
+                    <View className="flex-row items-center gap-3 bg-gray-50 px-2 py-4">
+                      <View className="h-9 w-9 items-center justify-center bg-orange-100" style={{ borderRadius: 20 }}>
+                        {/* <Feather name="phone" size={17} color="#EA580C" /> */}
+                        <MaterialCommunityIcons name="phone-classic" size={17} color="rgb(236, 77, 24)" />
                       </View>
-                    )}
+                      <View className="h-8 w-px bg-gray-200" />
+                      <View className="flex-1 flex-row items-center">
+                        <Text className="text-lg font-semibold text-gray-800">+233</Text>
+                        <TextInput
+                          placeholder="XXX XXX XXXX"
+                          placeholderTextColor="#9CA3AF"
+                          keyboardType="phone-pad"
+                          style={{ fontSize: 16 }}
+                          className="ml-2 flex-1 font-semibold text-gray-800"
+                          value={phoneNumber}
+                          onChangeText={handlePhoneChange}
+                          maxLength={9}
+                          editable={!loading}
+                        />
+                      </View>
+                      {canSendOtp && (
+                        <View className="h-5 w-5 items-center justify-center rounded-full bg-emerald-500">
+                          <Feather name="check" size={14} color="white" />
+                        </View>
+                      )}
+                    </View>
                   </View>
 
                   {/* Helper Text */}
-                  <View className="flex-row items-center gap-2 border-t border-gray-200 bg-gray-50 px-6 py-3">
+                  <View className="flex-row items-center gap-2 border-t border-gray-100 bg-gray-50 px-6 py-3">
                     <Ionicons name="information-circle" size={14} color="#EA580C" />
                     <Text className="flex-1 text-xs text-gray-600">
                       Use digits only. We will validate the number for verification.
@@ -182,7 +235,7 @@ export default function LoginScreen() {
                 <TouchableOpacity
                   onPress={handlePhoneSubmit}
                   disabled={!sendButtonEnabled}
-                  className={`w-full flex-row items-center justify-center gap-2 rounded-xl py-4 ${canSendOtp ? 'bg-orange-600' : 'bg-gray-200'}`}
+                  className={`w-full flex-row items-center justify-center gap-2 rounded-xl py-3.5 ${canSendOtp ? 'bg-orange-600/90' : 'bg-gray-200'}`}
                   activeOpacity={0.9}
                 >
                   {loading ? (
@@ -212,29 +265,35 @@ export default function LoginScreen() {
               // OTP VERIFICATION STEP
               <View className="gap-6">
                 {/* OTP Input Card */}
-                <View className="rounded-2xl bg-white border border-gray-200">
+                <View className="bg-white">
                   {/* Input Header */}
-                  <View className="border-b border-gray-200 bg-gray-50 px-6 py-3">
-                    <Text className="text-xs font-bold uppercase tracking-wide text-gray-700">
+                  <View className="border-b flex-row gap-1 items-center border-gray-200 bg-gray-50/90 px-2 py-3">
+                    <Ionicons name="shield-checkmark" size={15} color="#EA580C" />
+                    <Text className="text-xs font-semibold uppercase tracking-wide text-gray-700">
                       Verification Code
                     </Text>
                   </View>
 
                   {/* OTP Input Field */}
-                  <View className="gap-4 px-6 py-6">
-                    <View className="flex-row items-center gap-3">
-                      <Ionicons name="shield-checkmark" size={20} color="#EA580C" />
-                      <TextInput
-                        placeholder="******"
-                        placeholderTextColor="#D1D5DB"
-                        keyboardType="number-pad"
-                        maxLength={6}
-                        style={{ fontSize: 26, letterSpacing: 8 }}
-                        className="flex-1 py-3 font-bold text-gray-600 text-center"
-                        value={otpCode}
-                        onChangeText={handleOtpChange}
-                        editable={!loading}
-                      />
+                  <View>
+                    <View className="flex-row items-center gap-3 bg-gray-50 px-2 py-2">
+                      {/* <View className="h-9 w-9 items-center justify-center bg-orange-100" style={{ borderRadius: 20 }}>
+                        <Ionicons name="shield-checkmark" size={17} color="#EA580C" />
+                      </View>
+                      <View className="h-8 w-px bg-gray-200" /> */}
+                      <View className="flex-1 flex-row items-center">
+                        <TextInput
+                          placeholder="******"
+                          placeholderTextColor="#9CA3AF"
+                          keyboardType="number-pad"
+                          maxLength={6}
+                          style={{ fontSize: 26, letterSpacing: 8 }}
+                          className="flex-1 py-3 font-bold text-gray-800 text-center"
+                          value={otpCode}
+                          onChangeText={handleOtpChange}
+                          editable={!loading}
+                        />
+                      </View>
                     </View>
 
                     {/* OTP Visual Indicators */}
@@ -249,7 +308,7 @@ export default function LoginScreen() {
                   </View>
 
                   {/* Helper Text */}
-                  <View className="flex-row items-center gap-2 border-t border-gray-200 bg-gray-50 px-6 py-3">
+                  <View className="flex-row items-center gap-2 border-t border-gray-100 bg-gray-50 px-6 py-3">
                     <Text className="flex-1 text-xs text-gray-600">
                       Check your SMS for the 6-digit code
                     </Text>
@@ -260,7 +319,7 @@ export default function LoginScreen() {
                 <TouchableOpacity
                   onPress={handleOtpVerify}
                   disabled={!verifyButtonEnabled}
-                  className={`w-full flex-row items-center justify-center gap-2 rounded-xl py-4 ${canVerifyOtp ? 'bg-orange-600' : 'bg-gray-200'}`}
+                  className={`w-full flex-row items-center justify-center gap-2 rounded-xl py-4 ${canVerifyOtp ? 'bg-orange-600/90' : 'bg-gray-200'}`}
                   activeOpacity={0.9}
                 >
                   {loading ? (
@@ -317,7 +376,7 @@ export default function LoginScreen() {
             </Text>
 
             {/* Security Badge */}
-            <View className="mt-4 flex-row items-center justify-center gap-1.5 rounded-full bg-gray-100 px-3 py-2 border border-gray-200">
+            <View className="mt-4 flex-row items-center justify-center gap-1.5 rounded-full  px-3 py-2 ">
               <Ionicons name="lock-closed" size={12} color="#6B7280" />
               <Text className="text-xs font-semibold text-gray-700">Secure by design</Text>
             </View>
