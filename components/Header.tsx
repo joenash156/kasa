@@ -2,7 +2,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { } from "expo-image";
 import React from "react";
 import { Image, TouchableOpacity, View } from "react-native";
-import { rgbaColor } from "react-native-reanimated/lib/typescript/Colors";
 type AppHeaderProps = {
   onPressSettings?: () => void;
 };

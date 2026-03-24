@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ImageBackground,
@@ -24,6 +24,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 export default function Index() {
+  const router = useRouter();
   const { width } = useWindowDimensions();
   const [yourNumber, setYourNumber] = useState("");
   const [friendNumber, setFriendNumber] = useState("");
@@ -35,6 +36,10 @@ export default function Index() {
 
   const handleFriendNumber = (text: string) => {
     setFriendNumber(text.replace(/[^0-9]/g, ""));
+  };
+
+  const handleSettings = () => {
+    router.push("/settings");
   };
 
   const canCall = yourNumber.length >= 9 && friendNumber.length >= 9;
@@ -57,7 +62,7 @@ export default function Index() {
 
   return (
     <>
-      <Header />
+      <Header onPressSettings={handleSettings} />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
