@@ -74,13 +74,16 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
       className="flex-1 bg-gray-50"
     >
       <ScrollView
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         className="flex-1"
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
       >
         {/* Header with Logo/Brand */}
         <View className="flex-1 justify-between pt-8 pb-8">
@@ -125,7 +128,7 @@ export default function LoginScreen() {
             {/* Subheadline */}
             <Text className="mb-8 text-base font-medium text-gray-600 leading-relaxed text-center">
               {step === 'phone'
-                ? 'We\'ll send a verification code to your phone number'
+                ? 'We will send a verification code to your phone number'
                 : `Sent to +233${phoneNumber}`}
             </Text>
 
@@ -151,7 +154,7 @@ export default function LoginScreen() {
                         placeholder="XXX XXX XXXX"
                         placeholderTextColor="#D1D5DB"
                         keyboardType="phone-pad"
-                        style={{ fontSize: 16 }}
+                        style={{ fontSize: 15.5 }}
                         className="ml-2 flex-1 font-semibold text-gray-600"
                         value={phoneNumber}
                         onChangeText={handlePhoneChange}

@@ -16,7 +16,12 @@
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/logo.png"
       },
-      "edgeToEdgeEnabled": true,
+      "edgeToEdgeEnabled": false,
+      "statusBar": {
+        "backgroundColor": "#ea580c",
+        "barStyle": "light-content",
+        "translucent": false
+      },
       "predictiveBackGestureEnabled": false,
       "package": "com.joenash156.kasa"
     },

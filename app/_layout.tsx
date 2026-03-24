@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function RootLayout() {
   return (
     <>
-      <StatusBar style="light" backgroundColor="#ea580c" />
+      <StatusBar style="light" backgroundColor="#ea580c" translucent={false} />
       <SafeAreaView
         className="flex-1"
       >
