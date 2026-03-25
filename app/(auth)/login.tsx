@@ -3,6 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
+  FlatList,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -23,13 +24,14 @@ import { useTheme } from "../../context/ThemeContext";
 import { getThemeColors } from "../../theme/colors";
 
 export default function LoginScreen() {
-  const { height } = useWindowDimensions();
+  const { height, width } = useWindowDimensions();
   const { theme } = useTheme();
   const colors = getThemeColors(theme === "dark");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [otpCode, setOtpCode] = useState("");
   const [loading, setLoading] = useState(false);
+  const [carouselIndex, setCarouselIndex] = useState(0);
 
   // Animation hooks with staggered delays
   const animateHeading = usePageLoadSpringAnimation(100);
@@ -108,96 +110,83 @@ export default function LoginScreen() {
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
       >
         <View className="flex-1 pb-8">
-          {/* Hero Section */}
+          {/* Hero Carousel Section */}
           <View
             style={{ height: heroHeight }}
-            className="px-6 pt-8 overflow-hidden"
+            className="overflow-hidden relative"
           >
+            {/* Carousel Container */}
+            <FlatList
+              data={heroImages}
+              horizontal
+              pagingEnabled
+              scrollEventThrottle={16}
+              showsHorizontalScrollIndicator={false}
+              scrollEnabled={true}
+              nestedScrollEnabled={false}
+              onMomentumScrollEnd={(event) => {
+                const contentOffsetX = event.nativeEvent.contentOffset.x;
+                const currentIndex = Math.round(contentOffsetX / width);
+                setCarouselIndex(currentIndex);
+              }}
+              keyExtractor={(_, i) => i.toString()}
+              renderItem={({ item }) => (
+                <View
+                  style={{
+                    width: width,
+                    height: heroHeight,
+                  }}
+                >
+                  {/* Background Image */}
+                  <Image
+                    source={item}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      resizeMode: "cover",
+                    }}
+                  />
+
+                  {/* Light Orange Gradient Overlay */}
+                  <LinearGradient
+                    colors={[
+                      "rgba(255, 197, 166, 0.3)",
+                      "rgba(252, 206, 182, 0.5)",
+                      "rgba(250, 155, 105, 0.7)",
+                    ]}
+                    start={{ x: 0.5, y: 0 }}
+                    end={{ x: 0.5, y: 1 }}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      right: 0,
+                      bottom: 0,
+                      left: 0,
+                    }}
+                  />
+                </View>
+              )}
+            />
+
+            {/* Content Overlay */}
             <View
+              className="absolute inset-0 items-center justify-center"
+              pointerEvents="none"
               style={{
-                position: "absolute",
-                top: 0,
-                right: 0,
-                bottom: 0,
-                left: 0,
+                paddingHorizontal: 24,
+                
               }}
             >
-              <Image
-                source={require("../../assets/images/call-bg.png")}
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  width: "100%",
-                  height: "100%",
-                  resizeMode: "cover",
-                }}
-              />
-              <View
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  right: 0,
-                  bottom: 0,
-                  left: 0,
-                  backgroundColor: "rgba(255, 255, 255, 0)",
-                }}
-              />
-              <LinearGradient
-                colors={[
-                  "rgba(255, 197, 166, 0.3)",
-                  "rgba(252, 206, 182, 0.95)",
-                  "rgba(250, 155, 105, 0.94)",
-                ]}
-                start={{ x: 0.5, y: 0 }}
-                end={{ x: 0.5, y: 1 }}
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  right: 0,
-                  bottom: 0,
-                  left: 0,
-                }}
-              />
-            </View>
-
-            <View
-              className="items-center justify-center flex-1"
-              style={{ position: "relative" }}
-            >
-              <View className="w-52 h-24 items-center justify-center">
-                <Image
-                  source={require("../../assets/images/logo-white.png")}
-                  style={{ width: "100%", height: "100%" }}
-                  resizeMode="contain"
-                  // className='border'
-                />
-              </View>
-              <Animated.View
-                style={animateSecurityBadge}
-                className="mt-4 flex-row items-center gap-2"
-              >
-                <MaterialCommunityIcons
-                  name="phone-lock"
-                  size={15}
-                  color="#FFEDD5"
-                />
-                <Text className="text-sm font-semibold text-orange-50">
-                  Secure login
-                </Text>
-              </Animated.View>
               <Animated.View style={animateHeading}>
                 <Animated.Text
-                  className={`mt-5 text-center text-3xl font-bold ${colors.text} leading-tight`}
+                  className={`text-center text-3xl font-bold ${colors.text} leading-tight`}
                 >
                   {step === "phone" ? "Welcome back" : "Verify your account"}
                 </Animated.Text>
               </Animated.View>
-              <Animated.View style={animateSubtitle}>
+              <Animated.View style={animateSubtitle} className="mt-2">
                 <Text
-                  className={`mt-2 text-center text-sm font-medium ${colors.textSecondary}`}
+                  className={`text-center text-sm font-medium ${colors.textSecondary}`}
                 >
                   {step === "phone"
                     ? "Sign in with your phone number to continue."
@@ -217,6 +206,23 @@ export default function LoginScreen() {
                   {step === "phone" ? "Step 1 of 2" : "Step 2 of 2"}
                 </Text>
               </Animated.View>
+            </View>
+
+            {/* Carousel Indicators */}
+            <View
+              className="absolute bottom-4 left-0 right-0 flex-row items-center justify-center gap-2"
+              pointerEvents="none"
+            >
+              {heroImages.map((_, i) => (
+                <View
+                  key={i}
+                  className={`rounded-full transition-all ${
+                    carouselIndex === i
+                      ? "bg-white w-3 h-3"
+                      : "bg-white/50 w-2 h-2"
+                  }`}
+                />
+              ))}
             </View>
           </View>
 
@@ -304,7 +310,7 @@ export default function LoginScreen() {
                     className={`flex-row rounded-b-2xl items-center gap-2 ${colors.input} px-6 py-3`}
                     style={{
                       borderTopWidth: 0.5,
-                      borderColor: theme === "dark" ? "#212121" : "#D1D5DB",
+                      borderColor: theme === "dark" ? "#212121" : "#f3f3f3",
                     }}
                   >
                     <Ionicons
