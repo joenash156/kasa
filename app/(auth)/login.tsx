@@ -1,6 +1,6 @@
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -14,12 +14,6 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import Animated from "react-native-reanimated";
-import Person1Img from "../../assets/images/person1.png";
-import Person2Img from "../../assets/images/person2.png";
-import Person3Img from "../../assets/images/person3.png";
-import Person4Img from "../../assets/images/person4.png";
-import { usePageLoadSpringAnimation } from "../../components/animations/useAnimations";
 import { useTheme } from "../../context/ThemeContext";
 import { getThemeColors } from "../../theme/colors";
 
@@ -35,11 +29,6 @@ export default function LoginScreen() {
   const [isManualScrolling, setIsManualScrolling] = useState(false);
   const carouselRef = useRef<FlatList>(null);
 
-  // Animation hooks with staggered delays
-  const animateHeading = usePageLoadSpringAnimation(100);
-  const animateSubtitle = usePageLoadSpringAnimation(250);
-  const animateSecurityBadge = usePageLoadSpringAnimation(400);
-
   const phoneDigits = phoneNumber.replace(/\D/g, "");
   const canSendOtp = phoneDigits.length >= 9;
   const canVerifyOtp = otpCode.length === 6;
@@ -47,8 +36,16 @@ export default function LoginScreen() {
   const verifyButtonEnabled = canVerifyOtp && !loading;
   const heroHeight = Math.max(280, Math.min(height * 0.46, 390));
 
-  // hero images
-  const heroImages = [Person1Img, Person2Img, Person3Img, Person4Img];
+  // Use static requires for image sources to avoid platform/module interop issues.
+  const heroImages = useMemo(
+    () => [
+      require("../../assets/images/person1.png"),
+      require("../../assets/images/person2.png"),
+      require("../../assets/images/person3.png"),
+      require("../../assets/images/person4.png"),
+    ],
+    [],
+  );
 
   // Auto-scroll carousel effect
   useEffect(() => {
@@ -56,11 +53,16 @@ export default function LoginScreen() {
 
     const interval = setInterval(() => {
       setCarouselIndex((prevIndex) => {
+        if (width <= 0) return prevIndex;
         const nextIndex = (prevIndex + 1) % heroImages.length;
-        carouselRef.current?.scrollToIndex({
-          index: nextIndex,
-          animated: true,
-        });
+        try {
+          carouselRef.current?.scrollToIndex({
+            index: nextIndex,
+            animated: true,
+          });
+        } catch {
+          return prevIndex;
+        }
         return nextIndex;
       });
     }, 5000);
@@ -152,6 +154,10 @@ export default function LoginScreen() {
                 setCarouselIndex(currentIndex);
                 setIsManualScrolling(false);
               }}
+              onScrollToIndexFailed={() => {
+                // Prevent runtime interruption while list measurements settle.
+                setIsManualScrolling(false);
+              }}
               keyExtractor={(_, index) => index.toString()}
               renderItem={({ item }) => (
                 <View
@@ -203,14 +209,14 @@ export default function LoginScreen() {
                 alignSelf: "center",
               }}
             >
-              <Animated.View style={animateHeading}>
-                <Animated.Text
+              <View>
+                <Text
                   className={`text-center text-3xl font-bold ${colors.text} leading-tight`}
                 >
                   {step === "phone" ? "Welcome back" : "Verify your account"}
-                </Animated.Text>
-              </Animated.View>
-              <Animated.View style={animateSubtitle} className="mt-2">
+                </Text>
+              </View>
+              <View className="mt-2">
                 <Text
                   className={`text-center text-sm font-medium ${colors.textSecondary}`}
                 >
@@ -218,11 +224,8 @@ export default function LoginScreen() {
                     ? "Sign in with your phone number to continue."
                     : `Enter the 6-digit code sent to +233${phoneNumber}`}
                 </Text>
-              </Animated.View>
-              <Animated.View
-                style={animateSecurityBadge}
-                className="mt-4 flex-row items-center gap-2 rounded-full bg-white/20 px-3 py-1.5 border border-white/30"
-              >
+              </View>
+              <View className="mt-4 flex-row items-center gap-2 rounded-full bg-white/20 px-3 py-1.5 border border-white/30">
                 <Ionicons
                   name={step === "phone" ? "call-outline" : "shield-checkmark"}
                   size={12}
@@ -231,7 +234,7 @@ export default function LoginScreen() {
                 <Text className="text-xs font-semibold text-white">
                   {step === "phone" ? "Step 1 of 2" : "Step 2 of 2"}
                 </Text>
-              </Animated.View>
+              </View>
             </View>
 
             {/* Carousel Indicators */}

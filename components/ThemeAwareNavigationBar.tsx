@@ -10,7 +10,7 @@ export function ThemeAwareNavigationBar() {
     const applyNavigationBarColor = async () => {
       try {
         // NavigationBar colors based on theme
-        const navBarColor = isDarkMode ? "#0b0b0d" : "#ffffff";
+        const navBarColor = isDarkMode ? "#030712" : "#ffffff";
 
         await SystemUI.setBackgroundColorAsync(navBarColor);
       } catch (error) {

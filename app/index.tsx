@@ -111,7 +111,7 @@ export default function Index() {
                 experimentalBlurMethod={
                   Platform.OS === "android" ? "dimezisBlurView" : "none"
                 }
-                intensity={Platform.OS === "ios" ? 60 : 8}
+                intensity={Platform.OS === "ios" ? 60 : 2}
                 tint={isDarkMode ? "dark" : "light"}
                 style={StyleSheet.absoluteFill}
                 pointerEvents="none"
@@ -143,7 +143,7 @@ export default function Index() {
                   <View className="h-9 w-9 items-center justify-center rounded-full bg-orange-100">
                     <FontAwesome name="thumbs-o-up" size={16} color="#EA580C" />
                   </View>
-                  <Text className={`flex-1 text-sm font-semibold ${textColor}`}>
+                  <Text className={`flex-1 text-sm  ${textColor}`}>
                     No signup needed! Listen to a short ad and make free calls
                     instantly.
                   </Text>
@@ -165,7 +165,7 @@ export default function Index() {
             >
               {/* Form Header */}
               <View
-                className={` px-4 py-3.5 bg-gradient-to-r ${isDarkMode ? "from-gray-900 to-gray-950" : "from-gray-50 to-gray-100"}`}
+                className={`px-3 py-3.5 bg-gradient-to-r ${isDarkMode ? "from-gray-900 to-gray-950" : "from-gray-50 to-gray-100"}`}
               >
                 <View className="flex-row items-center gap-2">
                   <Ionicons
@@ -182,10 +182,10 @@ export default function Index() {
               </View>
 
               <View
-                className={`py-4 ${isDarkMode ? "bg-gray-900" : "bg-white"}`}
+                className={`px-2 ${isDarkMode ? "bg-gray-900" : "bg-white"}`}
               >
                 {/* Your Number Input */}
-                <View className={`flex-row items-center gap-3 px-4 py-3.5`}>
+                <View className={`flex-row items-center gap-3 px-2 py-3.5`}>
                   <View className="h-10 w-10 items-center justify-center rounded-full bg-orange-100">
                     <Feather name="phone" size={16} color="#EA580C" />
                   </View>
@@ -213,7 +213,7 @@ export default function Index() {
                 />
 
                 {/* Friend Number Input */}
-                <View className={`flex-row items-center gap-3 px-4 py-3.5`}>
+                <View className={`flex-row items-center gap-3 px-2 py-3.5`}>
                   <View className="h-10 w-10 items-center justify-center rounded-full bg-orange-100">
                     <Feather name="user" size={16} color="#EA580C" />
                   </View>

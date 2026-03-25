@@ -8,7 +8,7 @@ export default function RootLayoutWrapper() {
   const { theme } = useTheme();
   const isDarkMode = theme === "dark";
   const colors = getThemeColors(isDarkMode);
-  const bgColor = isDarkMode ? "#0b0b0d" : "#ffffff";
+  const bgColor = isDarkMode ? "#030712" : "#ffffff";
 
   return (
     <View style={{ flex: 1, backgroundColor: bgColor }}>

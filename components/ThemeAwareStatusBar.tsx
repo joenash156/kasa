@@ -6,7 +6,7 @@ export function ThemeAwareStatusBar() {
   const isDarkMode = theme === "dark";
 
   // Status bar colors and styles based on theme
-  const statusBarColor = isDarkMode ? "#0b0b0d" : "#ffffff";
+  const statusBarColor = isDarkMode ? "#030712" : "#ffffff";
   const statusBarStyle = isDarkMode ? "light" : "dark";
 
   return (
