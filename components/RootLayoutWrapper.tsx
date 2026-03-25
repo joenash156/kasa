@@ -8,11 +8,12 @@ export default function RootLayoutWrapper() {
   const { theme } = useTheme();
   const isDarkMode = theme === "dark";
   const colors = getThemeColors(isDarkMode);
+  const bgColor = isDarkMode ? "#0b0b0d" : "#ffffff";
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#ea580c" }}>
+    <View style={{ flex: 1, backgroundColor: bgColor }}>
       <SafeAreaView
-        edges={["left", "right", "bottom"]}
+        edges={["top", "left", "right", "bottom"]}
         className={`flex-1 ${colors.bg}`}
       >
         <InitialLayout />
