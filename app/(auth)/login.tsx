@@ -1,6 +1,6 @@
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -32,6 +32,8 @@ export default function LoginScreen() {
   const [otpCode, setOtpCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
+  const [isManualScrolling, setIsManualScrolling] = useState(false);
+  const carouselRef = useRef<FlatList>(null);
 
   // Animation hooks with staggered delays
   const animateHeading = usePageLoadSpringAnimation(100);
@@ -47,6 +49,24 @@ export default function LoginScreen() {
 
   // hero images
   const heroImages = [Person1Img, Person2Img, Person3Img, Person4Img];
+
+  // Auto-scroll carousel effect
+  useEffect(() => {
+    if (isManualScrolling) return;
+
+    const interval = setInterval(() => {
+      setCarouselIndex((prevIndex) => {
+        const nextIndex = (prevIndex + 1) % heroImages.length;
+        carouselRef.current?.scrollToIndex({
+          index: nextIndex,
+          animated: true,
+        });
+        return nextIndex;
+      });
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [isManualScrolling, heroImages.length]);
 
   const handlePhoneChange = (text: string) => {
     // Keep digits only (we render the "+" prefix in the UI)
@@ -79,7 +99,7 @@ export default function LoginScreen() {
     // Simulate verification
     setTimeout(() => {
       setLoading(false);
-      // Navigate to home - TODO: router.push('/(tabs)')
+      // Navigate to home
       console.log("Login successful!");
     }, 1200);
   };
@@ -117,6 +137,7 @@ export default function LoginScreen() {
           >
             {/* Carousel Container */}
             <FlatList
+              ref={carouselRef}
               data={heroImages}
               horizontal
               pagingEnabled
@@ -124,12 +145,14 @@ export default function LoginScreen() {
               showsHorizontalScrollIndicator={false}
               scrollEnabled={true}
               nestedScrollEnabled={false}
+              onScrollBeginDrag={() => setIsManualScrolling(true)}
               onMomentumScrollEnd={(event) => {
                 const contentOffsetX = event.nativeEvent.contentOffset.x;
                 const currentIndex = Math.round(contentOffsetX / width);
                 setCarouselIndex(currentIndex);
+                setIsManualScrolling(false);
               }}
-              keyExtractor={(_, i) => i.toString()}
+              keyExtractor={(_, index) => index.toString()}
               renderItem={({ item }) => (
                 <View
                   style={{
@@ -170,11 +193,14 @@ export default function LoginScreen() {
 
             {/* Content Overlay */}
             <View
-              className="absolute inset-0 items-center justify-center"
+              className="absolute inset-0"
               pointerEvents="none"
               style={{
-                paddingHorizontal: 24,
-                
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+                alignSelf: "center",
               }}
             >
               <Animated.View style={animateHeading}>
@@ -210,8 +236,16 @@ export default function LoginScreen() {
 
             {/* Carousel Indicators */}
             <View
-              className="absolute bottom-4 left-0 right-0 flex-row items-center justify-center gap-2"
-              pointerEvents="none"
+              className="absolute bottom-0 left-0 right-0 flex-row items-center justify-center gap-2"
+              // pointerEvents="none"
+              // style={{
+              //   bottom: 12,
+              //   position: "absolute",
+              //   flexDirection: "row",
+              //   alignItems: "center",
+              //   justifyContent: "center",
+              //   width: "100%",
+              // }}
             >
               {heroImages.map((_, i) => (
                 <View
@@ -221,6 +255,12 @@ export default function LoginScreen() {
                       ? "bg-white w-3 h-3"
                       : "bg-white/50 w-2 h-2"
                   }`}
+                  // style={{
+                  //   opacity: carouselIndex === i ? 1 : 0.5,
+                  //   width: carouselIndex === i ? 12 : 8,
+                  //   height: carouselIndex === i ? 12 : 8,
+                  //   borderRadius: 6,
+                  // }}
                 />
               ))}
             </View>
@@ -230,7 +270,7 @@ export default function LoginScreen() {
           <View className="px-3 mt-6">
             {step === "phone" ? (
               // PHONE NUMBER STEP
-              <View className="gap-6 l">
+              <View className="gap-6">
                 {/* Phone Input Card */}
                 <View className={`${colors.card}`}>
                   {/* Input Header */}
