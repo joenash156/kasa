@@ -2,13 +2,16 @@ import Header from "@/components/Header";
 import { useTheme } from "@/context/ThemeContext";
 import { getThemeColors } from "@/theme/colors";
 import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 import { Link, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
+  Dimensions,
   ImageBackground,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -75,6 +78,9 @@ export default function Index() {
     ],
   }));
 
+  const { height } = Dimensions.get("window");
+  const heroHeight = height * 0.45;
+
   return (
     <>
       <Header onPressSettings={handleSettings} />
@@ -92,13 +98,31 @@ export default function Index() {
         >
           <View className="flex-1">
             {/* Hero Section with Mascot */}
-            <ImageBackground
-              source={require("../assets/images/kasa-bg.png")}
-              resizeMode="cover"
-              className="px-2 py-8"
-            >
-              <Animated.View entering={FadeInDown.duration(320)}>
-                <Animated.Image
+            <View style={{ height: heroHeight }} className="px-2 py-8">
+              <ImageBackground
+                source={require("../assets/images/person1.png")}
+                resizeMode="cover"
+                style={StyleSheet.absoluteFill}
+              />
+
+              {/* Blur overlay (absolute) */}
+              <BlurView
+                blurReductionFactor={4}
+                experimentalBlurMethod={
+                  Platform.OS === "android" ? "dimezisBlurView" : "none"
+                }
+                intensity={Platform.OS === "ios" ? 60 : 8}
+                tint={isDarkMode ? "dark" : "light"}
+                style={StyleSheet.absoluteFill}
+                pointerEvents="none"
+              />
+
+              {/* Foreground content (not blurred) */}
+              <Animated.View
+                entering={FadeInDown.duration(320)}
+                style={styles.heroForeground}
+              >
+                {/* <Animated.Image
                   source={require("../assets/images/kasamascotphone.png")}
                   style={[
                     {
@@ -109,10 +133,12 @@ export default function Index() {
                     mascotAnimatedStyle,
                   ]}
                   resizeMode="contain"
-                />
-                {/* Pro Feature Banner */}
+                /> */}
+
+                {/* Pro Feature Banner (bottom-aligned with small bottom gap) */}
                 <View
-                  className={`flex-row items-center gap-3 px-4 py-3 rounded-xl ${bannerBg} mt-4 ${isDarkMode ? "bg-gray-800" : "bg-orange-50"}`}
+                  className={`flex-row items-center gap-3 px-4 py-2 rounded-xl ${bannerBg} ${isDarkMode ? "bg-gray-800" : "bg-orange-50"}`}
+                  style={styles.heroBanner}
                 >
                   <View className="h-9 w-9 items-center justify-center rounded-full bg-orange-100">
                     <FontAwesome name="thumbs-o-up" size={16} color="#EA580C" />
@@ -123,7 +149,7 @@ export default function Index() {
                   </Text>
                 </View>
               </Animated.View>
-            </ImageBackground>
+            </View>
 
             {/* Form Section */}
             <Animated.View
@@ -265,3 +291,13 @@ export default function Index() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  heroForeground: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  heroBanner: {
+    marginBottom: 1,
+  },
+});
