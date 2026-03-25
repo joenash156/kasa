@@ -23,7 +23,7 @@ export const appColors: ThemeScheme = {
     card: "bg-white",
     text: "text-gray-700",
     textSecondary: "text-gray-600",
-    border: "border-gray-50",
+    border: "border-gray-100",
     input: "bg-gray-50",
     inputText: "text-gray-700",
     inputBorder: "border-gray-200",

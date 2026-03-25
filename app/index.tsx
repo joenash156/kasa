@@ -112,7 +112,7 @@ export default function Index() {
                 />
                 {/* Pro Feature Banner */}
                 <View
-                  className={`flex-row items-center gap-3 px-4 py-3 border rounded-xl ${borderColor} ${bannerBg} shadow-sm mt-4 ${isDarkMode ? "bg-gray-800" : "bg-orange-50"}`}
+                  className={`flex-row items-center gap-3 px-4 py-3 border rounded-xl ${borderColor} ${bannerBg} mt-4 ${isDarkMode ? "bg-gray-800" : "bg-orange-50"}`}
                 >
                   <View className="h-9 w-9 items-center justify-center rounded-full bg-orange-100">
                     <FontAwesome name="thumbs-o-up" size={16} color="#EA580C" />
@@ -128,7 +128,7 @@ export default function Index() {
             {/* Form Section */}
             <Animated.View
               entering={FadeInDown.duration(360).delay(50)}
-              className={`${cardBg} mx-2 mt-6 rounded-2xl border ${borderColor} overflow-hidden shadow-sm`}
+              className={`${cardBg} mx-2 mt-6 rounded-2xl border ${borderColor} overflow-hidden`}
             >
               {/* Form Header */}
               <View
