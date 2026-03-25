@@ -236,7 +236,7 @@ export default function LoginScreen() {
 
             {/* Carousel Indicators */}
             <View
-              className="absolute bottom-0 left-0 right-0 flex-row items-center justify-center gap-2"
+              className="absolute bottom-3 left-0 right-0 flex-row items-center justify-center gap-2"
               // pointerEvents="none"
               // style={{
               //   bottom: 12,
@@ -252,7 +252,7 @@ export default function LoginScreen() {
                   key={i}
                   className={`rounded-full transition-all ${
                     carouselIndex === i
-                      ? "bg-white w-3 h-3"
+                      ? "bg-white w-5 h-2"
                       : "bg-white/50 w-2 h-2"
                   }`}
                   // style={{

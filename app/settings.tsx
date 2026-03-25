@@ -22,7 +22,7 @@ export default function SettingsScreen() {
     card: cardBg,
     text: textColor,
     textSecondary: secondaryTextColor,
-    border: borderColor,
+    // border: borderColor,
     iconPrimary,
   } = colors;
 
