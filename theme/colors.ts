@@ -25,7 +25,7 @@ export const appColors: ThemeScheme = {
     textSecondary: "text-gray-600",
     border: "border-gray-50",
     input: "bg-gray-50",
-    inputText: "text-gray-900",
+    inputText: "text-gray-700",
     inputBorder: "border-gray-200",
     iconPrimary: "#EA580C",
     iconSecondary: "#4B5563",

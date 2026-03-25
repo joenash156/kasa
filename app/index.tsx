@@ -112,7 +112,7 @@ export default function Index() {
                 />
                 {/* Pro Feature Banner */}
                 <View
-                  className={`flex-row items-center gap-3 px-4 py-3 border rounded-xl ${borderColor} ${bannerBg} shadow-sm mt-4`}
+                  className={`flex-row items-center gap-3 px-4 py-3 border rounded-xl ${borderColor} ${bannerBg} shadow-sm mt-4 ${isDarkMode ? "bg-gray-800" : "bg-orange-50"}`}
                 >
                   <View className="h-9 w-9 items-center justify-center rounded-full bg-orange-100">
                     <FontAwesome name="thumbs-o-up" size={16} color="#EA580C" />
@@ -132,7 +132,7 @@ export default function Index() {
             >
               {/* Form Header */}
               <View
-                className={`border-b ${borderColor} px-4 py-3.5 bg-gradient-to-r ${isDarkMode ? "from-gray-700 to-gray-800" : "from-gray-50 to-gray-100"}`}
+                className={`border-b ${borderColor} px-4 py-3.5 bg-gradient-to-r ${isDarkMode ? "from-gray-900 to-gray-950" : "from-gray-50 to-gray-100"}`}
               >
                 <View className="flex-row items-center gap-2">
                   <Ionicons
@@ -149,16 +149,16 @@ export default function Index() {
               </View>
 
               <View
-                className={`py-4 ${isDarkMode ? "bg-gray-800" : "bg-white"}`}
+                className={`py-4 ${isDarkMode ? "bg-gray-900" : "bg-white"}`}
               >
                 {/* Your Number Input */}
                 <View className={`flex-row items-center gap-3 px-4 py-3.5`}>
                   <View className="h-10 w-10 items-center justify-center rounded-full bg-orange-100">
                     <Feather name="phone" size={16} color="#EA580C" />
                   </View>
-                  <View className="h-8 w-px bg-gray-300" />
+                  <View className="h-8 w-px bg-gray-500" />
                   <Text
-                    className={`text-base font-semibold ${colors.inputText}`}
+                    className={`text-lg font-semibold ${colors.inputText}`}
                   >
                     +233
                   </Text>
@@ -184,9 +184,9 @@ export default function Index() {
                   <View className="h-10 w-10 items-center justify-center rounded-full bg-orange-100">
                     <Feather name="user" size={16} color="#EA580C" />
                   </View>
-                  <View className="h-8 w-px bg-gray-300" />
+                  <View className="h-8 w-px bg-gray-500" />
                   <Text
-                    className={`text-base font-semibold ${colors.inputText}`}
+                    className={`text-lg font-semibold ${colors.inputText}`}
                   >
                     +233
                   </Text>
@@ -205,13 +205,13 @@ export default function Index() {
 
               {/* Call Button & Footer */}
               <View
-                className={`px-4 py-4 border-t ${borderColor} ${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}
+                className={`px-4 py-4 border-t ${borderColor} ${isDarkMode ? "bg-gray-950" : "bg-gray-50"}`}
               >
                 <TouchableOpacity
                   disabled={!canCall}
                   activeOpacity={0.8}
                   className={`w-full flex-row items-center justify-center gap-2 rounded-xl py-3.5 ${
-                    canCall ? "bg-orange-600" : "bg-gray-300"
+                    canCall ? "bg-orange-600" : `${isDarkMode ? "bg-gray-700" : "bg-gray-300"}`
                   }`}
                 >
                   <Ionicons
@@ -221,7 +221,7 @@ export default function Index() {
                   />
                   <Text
                     className={`font-bold text-base ${
-                      canCall ? "text-white" : "text-gray-500"
+                      canCall ? "text-white" : `${isDarkMode ? "text-gray-400" : "text-gray-600"}`
                     }`}
                   >
                     Start Free Call
@@ -239,10 +239,10 @@ export default function Index() {
             {/* Login Prompt */}
             <Animated.View
               entering={FadeInDown.duration(360).delay(110)}
-              className="mt-8 px-4"
+              className="mt-6 px-4"
             >
               <View
-                className={`px-4 py-3`}
+                className={`px-4 pb-5`}
               >
                 <Text className={`text-sm text-center ${secondaryTextColor}`}>
                   Do you want to keep your call logs?{" "}

@@ -96,7 +96,7 @@ export default function SettingsScreen() {
                 <MaterialCommunityIcons
                   name="check-circle"
                   size={20}
-                  color="#10B981"
+                  color="#10B911"
                 />
               )}
             </View>
@@ -159,7 +159,7 @@ export default function SettingsScreen() {
             </View>
 
             {/* Notification Setting Placeholder */}
-            <View className={`flex-row items-center justify-between px-3 py-4`}>
+            {/* <View className={`flex-row items-center justify-between px-3 py-4`}>
               <View className="flex-1 flex-row items-center gap-3">
                 <View className="h-10 w-10 items-center justify-center rounded-full bg-blue-100">
                   <Ionicons
@@ -184,7 +184,7 @@ export default function SettingsScreen() {
                 trackColor={{ false: "#D1D5DB", true: "#4B5563" }}
                 thumbColor="#FFA500"
               />
-            </View>
+            </View> */}
           </View>
         </View>
 
@@ -257,7 +257,7 @@ export default function SettingsScreen() {
             </View>
 
             {/* Build Info */}
-            <View className={`flex-row items-center px-3 py-4`}>
+            {/* <View className={`flex-row items-center px-3 py-4`}>
               <View className="flex-1 flex-row items-center gap-3">
                 <View className="h-10 w-10 items-center justify-center rounded-full bg-indigo-100">
                   <Ionicons name="code-working" size={20} color="#6366F1" />
@@ -271,12 +271,12 @@ export default function SettingsScreen() {
                   </Text>
                 </View>
               </View>
-            </View>
+            </View> */}
           </View>
         </View>
 
         {/* Footer */}
-        <View className="px-3 pt-6">
+        <View className="px-3 py-2">
           <Text className={`text-xs text-center ${secondaryTextColor}`}>
             Made by {APP_NAME} Team
           </Text>
