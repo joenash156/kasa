@@ -38,7 +38,7 @@ export default function Header({ onPressSettings }: AppHeaderProps) {
           <Ionicons
             name="settings-outline"
             size={22}
-            color={isDarkMode ? "#D1D5DB" : "#4B5563"}
+            color={isDarkMode ? "#ffffff" : "#4B5563"}
           />
         </TouchableOpacity>
       </View>

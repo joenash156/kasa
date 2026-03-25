@@ -3,9 +3,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  FlatList,
   Image,
   KeyboardAvoidingView,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
   Platform,
   ScrollView,
   Text,
@@ -20,14 +21,21 @@ import { getThemeColors } from "../../theme/colors";
 export default function LoginScreen() {
   const { height, width } = useWindowDimensions();
   const { theme } = useTheme();
+  const isDarkMode = theme === "dark";
   const colors = getThemeColors(theme === "dark");
+  const screenBgColor = isDarkMode ? "#030712" : "#F9FAFB";
+  /** Inline fallbacks so UI stays visible if NativeWind classNames fail on this route. */
+  const textPrimary = isDarkMode ? "#F9FAFB" : "#111827";
+  const textSecondary = isDarkMode ? "#D1D5DB" : "#4B5563";
+  const inputTextColor = isDarkMode ? "#F9FAFB" : "#111827";
+  const cardBgColor = isDarkMode ? "#111827" : "#FFFFFF";
   const [phoneNumber, setPhoneNumber] = useState("");
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [otpCode, setOtpCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [isManualScrolling, setIsManualScrolling] = useState(false);
-  const carouselRef = useRef<FlatList>(null);
+  const heroScrollRef = useRef<ScrollView>(null);
 
   const phoneDigits = phoneNumber.replace(/\D/g, "");
   const canSendOtp = phoneDigits.length >= 9;
@@ -47,7 +55,7 @@ export default function LoginScreen() {
     [],
   );
 
-  // Auto-scroll carousel effect
+  // Auto-scroll carousel (horizontal ScrollView — avoids FlatList-inside-ScrollView on Android)
   useEffect(() => {
     if (isManualScrolling) return;
 
@@ -55,20 +63,22 @@ export default function LoginScreen() {
       setCarouselIndex((prevIndex) => {
         if (width <= 0) return prevIndex;
         const nextIndex = (prevIndex + 1) % heroImages.length;
-        try {
-          carouselRef.current?.scrollToIndex({
-            index: nextIndex,
-            animated: true,
-          });
-        } catch {
-          return prevIndex;
-        }
+        heroScrollRef.current?.scrollTo({
+          x: nextIndex * width,
+          animated: true,
+        });
         return nextIndex;
       });
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isManualScrolling, heroImages.length]);
+  }, [isManualScrolling, heroImages.length, width]);
+
+  const onHeroMomentumEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const x = e.nativeEvent.contentOffset.x;
+    setCarouselIndex(Math.min(heroImages.length - 1, Math.max(0, Math.round(x / width))));
+    setIsManualScrolling(false);
+  };
 
   const handlePhoneChange = (text: string) => {
     // Keep digits only (we render the "+" prefix in the UI)
@@ -123,13 +133,20 @@ export default function LoginScreen() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
       className={`flex-1 ${colors.bg}`}
+      style={{ backgroundColor: screenBgColor }}
     >
       <ScrollView
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
+        nestedScrollEnabled
         className={`flex-1 ${colors.bg}`}
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
+        style={{ backgroundColor: screenBgColor }}
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingBottom: 24,
+          backgroundColor: screenBgColor,
+        }}
       >
         <View className="flex-1 pb-8">
           {/* Hero Carousel Section */}
@@ -137,46 +154,33 @@ export default function LoginScreen() {
             style={{ height: heroHeight }}
             className="overflow-hidden relative"
           >
-            {/* Carousel Container */}
-            <FlatList
-              ref={carouselRef}
-              data={heroImages}
+            <ScrollView
+              ref={heroScrollRef}
               horizontal
               pagingEnabled
-              scrollEventThrottle={16}
               showsHorizontalScrollIndicator={false}
-              scrollEnabled={true}
-              nestedScrollEnabled={false}
+              nestedScrollEnabled
+              keyboardShouldPersistTaps="handled"
               onScrollBeginDrag={() => setIsManualScrolling(true)}
-              onMomentumScrollEnd={(event) => {
-                const contentOffsetX = event.nativeEvent.contentOffset.x;
-                const currentIndex = Math.round(contentOffsetX / width);
-                setCarouselIndex(currentIndex);
-                setIsManualScrolling(false);
-              }}
-              onScrollToIndexFailed={() => {
-                // Prevent runtime interruption while list measurements settle.
-                setIsManualScrolling(false);
-              }}
-              keyExtractor={(_, index) => index.toString()}
-              renderItem={({ item }) => (
+              onMomentumScrollEnd={onHeroMomentumEnd}
+              scrollEventThrottle={16}
+            >
+              {heroImages.map((src, index) => (
                 <View
+                  key={index}
                   style={{
-                    width: width,
+                    width,
                     height: heroHeight,
                   }}
                 >
-                  {/* Background Image */}
                   <Image
-                    source={item}
+                    source={src}
                     style={{
                       width: "100%",
                       height: "100%",
                       resizeMode: "cover",
                     }}
                   />
-
-                  {/* Light Orange Gradient Overlay */}
                   <LinearGradient
                     colors={[
                       "rgba(255, 197, 166, 0.3)",
@@ -194,8 +198,8 @@ export default function LoginScreen() {
                     }}
                   />
                 </View>
-              )}
-            />
+              ))}
+            </ScrollView>
 
             {/* Content Overlay */}
             <View
@@ -212,6 +216,12 @@ export default function LoginScreen() {
               <View>
                 <Text
                   className={`text-center text-3xl font-bold ${colors.text} leading-tight`}
+                  style={{
+                    color: "#FFFFFF",
+                    textShadowColor: "rgba(0,0,0,0.45)",
+                    textShadowOffset: { width: 0, height: 1 },
+                    textShadowRadius: 4,
+                  }}
                 >
                   {step === "phone" ? "Welcome back" : "Verify your account"}
                 </Text>
@@ -219,6 +229,12 @@ export default function LoginScreen() {
               <View className="mt-2">
                 <Text
                   className={`text-center text-sm font-medium ${colors.textSecondary}`}
+                  style={{
+                    color: "rgba(255,255,255,0.92)",
+                    textShadowColor: "rgba(0,0,0,0.35)",
+                    textShadowOffset: { width: 0, height: 1 },
+                    textShadowRadius: 3,
+                  }}
                 >
                   {step === "phone"
                     ? "Sign in with your phone number to continue."
@@ -275,7 +291,10 @@ export default function LoginScreen() {
               // PHONE NUMBER STEP
               <View className="gap-6">
                 {/* Phone Input Card */}
-                <View className={`${colors.card}`}>
+                <View
+                  className={`${colors.card}`}
+                  style={{ backgroundColor: cardBgColor }}
+                >
                   {/* Input Header */}
                   <View
                     className={` rounded-t-2xl flex-row gap-1 items-center ${colors.input} px-2 py-3 `}
@@ -292,6 +311,7 @@ export default function LoginScreen() {
                     {/* <MaterialCommunityIcons name="cellphone-basic" size={20} color="#EA580C" /> */}
                     <Text
                       className={`text-xs font-semibold uppercase tracking-wide ${colors.text}`}
+                      style={{ color: textPrimary }}
                     >
                       Phone Number
                     </Text>
@@ -323,6 +343,7 @@ export default function LoginScreen() {
                       <View className="flex-1 flex-row items-center">
                         <Text
                           className={`text-lg font-semibold ${colors.text}`}
+                          style={{ color: textPrimary }}
                         >
                           +233
                         </Text>
@@ -332,7 +353,7 @@ export default function LoginScreen() {
                             theme === "dark" ? "#6B7280" : "#9CA3AF"
                           }
                           keyboardType="phone-pad"
-                          style={{ fontSize: 16 }}
+                          style={{ fontSize: 16, color: inputTextColor }}
                           className={`ml-2 flex-1 font-semibold ${colors.inputText}`}
                           value={phoneNumber}
                           onChangeText={handlePhoneChange}
@@ -361,7 +382,10 @@ export default function LoginScreen() {
                       size={14}
                       color={colors.iconPrimary}
                     />
-                    <Text className={`flex-1 text-xs ${colors.textSecondary}`}>
+                    <Text
+                      className={`flex-1 text-xs ${colors.textSecondary}`}
+                      style={{ color: textSecondary }}
+                    >
                       Use digits only. We will validate the number for
                       verification.
                     </Text>
@@ -415,6 +439,7 @@ export default function LoginScreen() {
                   <Feather name="info" size={16} color="#3B82F6" />
                   <Text
                     className={`flex-1 text-xs ${colors.text} leading-relaxed`}
+                    style={{ color: textPrimary }}
                   >
                     Your number is encrypted and secure. We will never share it
                     with third parties.
@@ -425,7 +450,10 @@ export default function LoginScreen() {
               // OTP VERIFICATION STEP
               <View className="gap-6">
                 {/* OTP Input Card */}
-                <View className={colors.card}>
+                <View
+                  className={colors.card}
+                  style={{ backgroundColor: cardBgColor }}
+                >
                   {/* Input Header */}
                   <View
                     className={`flex-row gap-1 items-center ${colors.input} px-2 py-3`}
@@ -441,6 +469,7 @@ export default function LoginScreen() {
                     />
                     <Text
                       className={`text-xs font-semibold uppercase tracking-wide ${colors.text}`}
+                      style={{ color: textPrimary }}
                     >
                       Verification Code
                     </Text>
@@ -467,7 +496,11 @@ export default function LoginScreen() {
                           }
                           keyboardType="number-pad"
                           maxLength={6}
-                          style={{ fontSize: 26, letterSpacing: 8 }}
+                          style={{
+                            fontSize: 26,
+                            letterSpacing: 8,
+                            color: inputTextColor,
+                          }}
                           className={`flex-1 py-3 font-bold ${colors.inputText} text-center`}
                           value={otpCode}
                           onChangeText={handleOtpChange}
@@ -496,7 +529,10 @@ export default function LoginScreen() {
                       borderColor: theme === "dark" ? "#212121" : "#f3f3f3",
                     }}
                   >
-                    <Text className={`flex-1 text-xs ${colors.textSecondary}`}>
+                    <Text
+                      className={`flex-1 text-xs ${colors.textSecondary}`}
+                      style={{ color: textSecondary }}
+                    >
                       Check your SMS for the 6-digit code
                     </Text>
                   </View>
@@ -555,7 +591,10 @@ export default function LoginScreen() {
 
                 {/* Resend OTP */}
                 <View className="flex-row items-center justify-center gap-2">
-                  <Text className={`text-xs ${colors.textSecondary}`}>
+                  <Text
+                    className={`text-xs ${colors.textSecondary}`}
+                    style={{ color: textSecondary }}
+                  >
                     Did not receive code?
                   </Text>
                   <TouchableOpacity
@@ -577,13 +616,20 @@ export default function LoginScreen() {
           <View className="px-6 py-4">
             <Text
               className={`text-center text-xs ${colors.textSecondary} leading-relaxed`}
+              style={{ color: textSecondary }}
             >
               By logging in, you agree to our{" "}
-              <Text className={`font-semibold ${colors.text}`}>
+              <Text
+                className={`font-semibold ${colors.text}`}
+                style={{ color: textPrimary }}
+              >
                 Terms of Service
               </Text>{" "}
               and{" "}
-              <Text className={`font-semibold ${colors.text}`}>
+              <Text
+                className={`font-semibold ${colors.text}`}
+                style={{ color: textPrimary }}
+              >
                 Privacy Policy
               </Text>
             </Text>
@@ -595,7 +641,10 @@ export default function LoginScreen() {
                 size={12}
                 color={colors.iconSecondary}
               />
-              <Text className={`text-xs font-semibold ${colors.textSecondary}`}>
+              <Text
+                className={`text-xs font-semibold ${colors.textSecondary}`}
+                style={{ color: textSecondary }}
+              >
                 Secure by design
               </Text>
             </View>

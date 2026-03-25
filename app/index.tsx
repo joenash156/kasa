@@ -105,17 +105,28 @@ export default function Index() {
                 style={StyleSheet.absoluteFill}
               />
 
-              {/* Blur overlay (absolute) */}
-              <BlurView
-                blurReductionFactor={4}
-                experimentalBlurMethod={
-                  Platform.OS === "android" ? "dimezisBlurView" : "none"
-                }
-                intensity={Platform.OS === "ios" ? 60 : 2}
-                tint={isDarkMode ? "dark" : "light"}
-                style={StyleSheet.absoluteFill}
-                pointerEvents="none"
-              />
+              {Platform.OS === "ios" ? (
+                <BlurView
+                  blurReductionFactor={4}
+                  experimentalBlurMethod="none"
+                  intensity={60}
+                  tint={isDarkMode ? "dark" : "light"}
+                  style={StyleSheet.absoluteFill}
+                  pointerEvents="none"
+                />
+              ) : (
+                <View
+                  pointerEvents="none"
+                  style={[
+                    StyleSheet.absoluteFill,
+                    {
+                      backgroundColor: isDarkMode
+                        ? "rgba(3, 7, 18, 0.45)"
+                        : "rgba(255, 255, 255, 0.35)",
+                    },
+                  ]}
+                />
+              )}
 
               {/* Foreground content (not blurred) */}
               <Animated.View
