@@ -41,7 +41,7 @@ export default function Index() {
     card: cardBg,
     text: textColor,
     textSecondary: secondaryTextColor,
-    border: borderColor,
+    //border: borderColor,
     bannerBg,
   } = colors;
 
@@ -112,7 +112,7 @@ export default function Index() {
                 />
                 {/* Pro Feature Banner */}
                 <View
-                  className={`flex-row items-center gap-3 px-4 py-3 border rounded-xl ${borderColor} ${bannerBg} mt-4 ${isDarkMode ? "bg-gray-800" : "bg-orange-50"}`}
+                  className={`flex-row items-center gap-3 px-4 py-3 rounded-xl ${bannerBg} mt-4 ${isDarkMode ? "bg-gray-800" : "bg-orange-50"}`}
                 >
                   <View className="h-9 w-9 items-center justify-center rounded-full bg-orange-100">
                     <FontAwesome name="thumbs-o-up" size={16} color="#EA580C" />
@@ -128,11 +128,18 @@ export default function Index() {
             {/* Form Section */}
             <Animated.View
               entering={FadeInDown.duration(360).delay(50)}
-              className={`${cardBg} mx-2 mt-6 rounded-2xl border ${borderColor} overflow-hidden`}
+              className={`${cardBg} mx-2 mt-6 rounded-2xl overflow-hidden`}
+              style={{
+                shadowColor: isDarkMode ? "#212121" : "#ededed",
+                shadowOffset: { width: 0, height: 0.3 }, 
+                shadowOpacity: 0.1,
+                shadowRadius: 1,
+                elevation: 3,
+              }}
             >
               {/* Form Header */}
               <View
-                className={`border-b ${borderColor} px-4 py-3.5 bg-gradient-to-r ${isDarkMode ? "from-gray-900 to-gray-950" : "from-gray-50 to-gray-100"}`}
+                className={` px-4 py-3.5 bg-gradient-to-r ${isDarkMode ? "from-gray-900 to-gray-950" : "from-gray-50 to-gray-100"}`}
               >
                 <View className="flex-row items-center gap-2">
                   <Ionicons
@@ -205,7 +212,7 @@ export default function Index() {
 
               {/* Call Button & Footer */}
               <View
-                className={`px-4 py-4 border-t ${borderColor} ${isDarkMode ? "bg-gray-950" : "bg-gray-50"}`}
+                className={`px-4 py-4  ${isDarkMode ? "bg-gray-950" : "bg-gray-50"}`}
               >
                 <TouchableOpacity
                   disabled={!canCall}

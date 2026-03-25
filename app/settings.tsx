@@ -35,7 +35,7 @@ export default function SettingsScreen() {
     <View className={`flex-1 ${bgColor}`}>
       {/* Header */}
       <View
-        className={`flex-row items-center justify-between px-2 py-4 border-b ${borderColor} ${isDarkMode ? "bg-gray-950" : "bg-white"}`}
+        className={`flex-row items-center justify-between px-2 py-4 ${isDarkMode ? "bg-gray-950" : "bg-white"}`}
       >
         <Text className={`text-2xl font-bold ${textColor}`}>Settings</Text>
         <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
@@ -61,11 +61,16 @@ export default function SettingsScreen() {
           </Text>
 
           <View
-            className={`rounded-2xl border ${borderColor} overflow-hidden ${cardBg}`}
+            className={`rounded-2xl overflow-hidden ${cardBg}`}
+            style={{
+              borderWidth: 1,
+              borderColor: isDarkMode ? "#212121" : "#f7f7f7",
+            }}
           >
             {/* User Info */}
             <View
-              className={`flex-row items-center gap-4 px-3 py-4 ${borderColor}`}
+              className={`flex-row items-center gap-4 px-3 py-4`}
+
             >
               <View
                 className={`h-12 w-12 items-center justify-center rounded-full ${
@@ -126,11 +131,15 @@ export default function SettingsScreen() {
           </Text>
 
           <View
-            className={`rounded-2xl border ${borderColor} overflow-hidden ${cardBg}`}
+            className={`rounded-2xl overflow-hidden ${cardBg}`}
+            style={{
+              borderWidth: 1,
+              borderColor: isDarkMode ? "#212121" : "#f7f7f7",
+            }}
           >
             {/* Theme Toggle */}
             <View
-              className={`flex-row items-center justify-between px-3 py-4 border-b ${borderColor}`}
+              className={`flex-row items-center justify-between px-3 py-4`}
             >
               <View className="flex-1 flex-row items-center gap-3">
                 <View className="h-10 w-10 items-center justify-center rounded-full bg-orange-100">
@@ -197,11 +206,15 @@ export default function SettingsScreen() {
           </Text>
 
           <View
-            className={`rounded-2xl border ${borderColor} overflow-hidden ${cardBg}`}
+            className={`rounded-2xl overflow-hidden ${cardBg}`}
+            style={{
+              borderWidth: 1,
+              borderColor: isDarkMode ? "#212121" : "#f7f7f7",
+            }}
           >
             {/* App Name */}
             <View
-              className={`flex-row items-center justify-between px-3 py-4 border-b ${borderColor}`}
+              className={`flex-row items-center justify-between px-3 py-4 `}
             >
               <View className="flex-1 flex-row items-center gap-3">
                 <View className="h-10 w-10 items-center justify-center rounded-full bg-purple-100">
@@ -218,7 +231,7 @@ export default function SettingsScreen() {
 
             {/* Version */}
             <View
-              className={`flex-row items-center justify-between px-3 py-4 border-b ${borderColor}`}
+              className={`flex-row items-center justify-between px-3 py-4 `}
             >
               <View className="flex-1 flex-row items-center gap-3">
                 <View className="h-10 w-10 items-center justify-center rounded-full bg-green-100">
@@ -239,7 +252,7 @@ export default function SettingsScreen() {
 
             {/* Description */}
             <View
-              className={`flex-row items-center justify-between px-3 py-4 border-b ${borderColor}`}
+              className={`flex-row items-center justify-between px-3 py-4 `}
             >
               <View className="flex-1 flex-row items-center gap-3">
                 <View className="h-10 w-10 items-center justify-center rounded-full bg-pink-100">

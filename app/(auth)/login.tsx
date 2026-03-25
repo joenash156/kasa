@@ -14,6 +14,10 @@ import {
   View,
 } from "react-native";
 import Animated from "react-native-reanimated";
+import Person1Img from "../../assets/images/person1.png";
+import Person2Img from "../../assets/images/person2.png";
+import Person3Img from "../../assets/images/person3.png";
+import Person4Img from "../../assets/images/person4.png";
 import { usePageLoadSpringAnimation } from "../../components/animations/useAnimations";
 import { useTheme } from "../../context/ThemeContext";
 import { getThemeColors } from "../../theme/colors";
@@ -38,6 +42,9 @@ export default function LoginScreen() {
   const sendButtonEnabled = canSendOtp && !loading;
   const verifyButtonEnabled = canVerifyOtp && !loading;
   const heroHeight = Math.max(280, Math.min(height * 0.46, 390));
+
+  // hero images
+  const heroImages = [Person1Img, Person2Img, Person3Img, Person4Img];
 
   const handlePhoneChange = (text: string) => {
     // Keep digits only (we render the "+" prefix in the UI)
@@ -140,9 +147,9 @@ export default function LoginScreen() {
               />
               <LinearGradient
                 colors={[
-                  "rgb(234, 90, 12)",
-                  "rgba(242, 113, 43, 0.95)",
-                  "rgba(249, 128, 63, 0.94)",
+                  "rgba(255, 197, 166, 0.3)",
+                  "rgba(252, 206, 182, 0.95)",
+                  "rgba(250, 155, 105, 0.94)",
                 ]}
                 start={{ x: 0.5, y: 0 }}
                 end={{ x: 0.5, y: 1 }}
@@ -222,7 +229,12 @@ export default function LoginScreen() {
                 <View className={`${colors.card}`}>
                   {/* Input Header */}
                   <View
-                    className={`border-b rounded-t-2xl flex-row gap-1 items-center ${colors.border} ${colors.input} px-2 py-3 `}
+                    className={` rounded-t-2xl flex-row gap-1 items-center ${colors.input} px-2 py-3 `}
+                    style={{
+                      borderWidth: 1,
+                      borderColor: theme === "dark" ? "#212121" : "#f5f5f5",
+                    }}
+
                   >
                     <Feather
                       name="phone"
@@ -241,6 +253,10 @@ export default function LoginScreen() {
                   <View className="">
                     <View
                       className={`flex-row items-center gap-3 ${colors.input} px-2 py-4`}
+                      style={{
+                        borderWidth: 1,
+                        borderColor: theme === "dark" ? "#212121" : "#f5f5f5",
+                      }}
                     >
                       <View
                         className="h-9 w-9 items-center justify-center bg-orange-100"
@@ -253,7 +269,9 @@ export default function LoginScreen() {
                           color="rgb(236, 77, 24)"
                         />
                       </View>
-                      <View className={`h-8 w-px ${colors.inputBorder}`} />
+                      <View
+                        className={`h-8 w-px ${theme === "dark" ? "bg-gray-600" : "bg-gray-300"}`}
+                      />
                       <View className="flex-1 flex-row items-center">
                         <Text
                           className={`text-lg font-semibold ${colors.text}`}
@@ -284,7 +302,11 @@ export default function LoginScreen() {
 
                   {/* Helper Text */}
                   <View
-                    className={`flex-row rounded-b-2xl items-center gap-2 border-t ${colors.border} ${colors.input} px-6 py-3`}
+                    className={`flex-row rounded-b-2xl items-center gap-2 ${colors.input} px-6 py-3`}
+                    style={{
+                      borderTopWidth: 0.5,
+                      borderColor: theme === "dark" ? "#212121" : "#D1D5DB",
+                    }}
                   >
                     <Ionicons
                       name="information-circle"
@@ -336,7 +358,12 @@ export default function LoginScreen() {
 
                 {/* Info Box */}
                 <View
-                  className={`flex-row gap-3 rounded-lg ${colors.bannerBg} p-4 border ${colors.inputBorder}`}
+                  className={`flex-row gap-3 rounded-lg ${colors.bannerBg} p-4 `}
+                  style={{
+                    borderWidth: 1,
+                    borderColor: theme === "dark" ? "#212121" : "#f7f7f7",
+                  }}
+
                 >
                   <Feather name="info" size={16} color="#3B82F6" />
                   <Text
