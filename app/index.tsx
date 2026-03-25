@@ -156,7 +156,7 @@ export default function Index() {
                   <View className="h-10 w-10 items-center justify-center rounded-full bg-orange-100">
                     <Feather name="phone" size={16} color="#EA580C" />
                   </View>
-                  <View className="h-8 w-px bg-gray-500" />
+                  <View className={`h-8 w-px ${isDarkMode ? "bg-gray-700/50" : "bg-gray-200"}`} />
                   <Text
                     className={`text-lg font-semibold ${colors.inputText}`}
                   >
@@ -176,7 +176,7 @@ export default function Index() {
 
                 {/* Divider */}
                 <View
-                  className={`mx-4 h-px ${isDarkMode ? "bg-gray-700" : "bg-gray-200"}`}
+                  className={`mx-4 h-px ${isDarkMode ? "bg-gray-700/50" : "bg-gray-200/70"}`}
                 />
 
                 {/* Friend Number Input */}
@@ -184,7 +184,7 @@ export default function Index() {
                   <View className="h-10 w-10 items-center justify-center rounded-full bg-orange-100">
                     <Feather name="user" size={16} color="#EA580C" />
                   </View>
-                  <View className="h-8 w-px bg-gray-500" />
+                  <View className={`h-8 w-px ${isDarkMode ? "bg-gray-700/50" : "bg-gray-200"}`} />
                   <Text
                     className={`text-lg font-semibold ${colors.inputText}`}
                   >
