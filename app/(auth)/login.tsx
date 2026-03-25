@@ -234,7 +234,6 @@ export default function LoginScreen() {
                       borderWidth: 1,
                       borderColor: theme === "dark" ? "#212121" : "#f5f5f5",
                     }}
-
                   >
                     <Feather
                       name="phone"
@@ -363,7 +362,6 @@ export default function LoginScreen() {
                     borderWidth: 1,
                     borderColor: theme === "dark" ? "#212121" : "#f7f7f7",
                   }}
-
                 >
                   <Feather name="info" size={16} color="#3B82F6" />
                   <Text
@@ -381,7 +379,11 @@ export default function LoginScreen() {
                 <View className={colors.card}>
                   {/* Input Header */}
                   <View
-                    className={`border-b flex-row gap-1 items-center ${colors.border} ${colors.input} px-2 py-3`}
+                    className={`flex-row gap-1 items-center ${colors.input} px-2 py-3`}
+                    style={{
+                      borderWidth: 1,
+                      borderColor: theme === "dark" ? "#212121" : "#f5f5f5",
+                    }}
                   >
                     <Ionicons
                       name="shield-checkmark"
@@ -399,6 +401,10 @@ export default function LoginScreen() {
                   <View>
                     <View
                       className={`flex-row items-center gap-3 ${colors.input} px-2 py-2`}
+                      style={{
+                        borderWidth: 1,
+                        borderColor: theme === "dark" ? "#212121" : "#f5f5f5",
+                      }}
                     >
                       {/* <View className="h-9 w-9 items-center justify-center bg-orange-100" style={{ borderRadius: 20 }}>
                         <Ionicons name="shield-checkmark" size={17} color="#EA580C" />
@@ -435,7 +441,11 @@ export default function LoginScreen() {
 
                   {/* Helper Text */}
                   <View
-                    className={`flex-row items-center gap-2 border-t ${colors.border} ${colors.input} px-6 py-3`}
+                    className={`flex-row items-center gap-2 ${colors.input} px-6 py-3`}
+                    style={{
+                      borderTopWidth: 0.5,
+                      borderColor: theme === "dark" ? "#212121" : "#f3f3f3",
+                    }}
                   >
                     <Text className={`flex-1 text-xs ${colors.textSecondary}`}>
                       Check your SMS for the 6-digit code
