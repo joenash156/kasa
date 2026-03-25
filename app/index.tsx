@@ -154,7 +154,7 @@ export default function Index() {
                   <View className="h-9 w-9 items-center justify-center rounded-full bg-orange-100">
                     <FontAwesome name="thumbs-o-up" size={16} color="#EA580C" />
                   </View>
-                  <Text className={`flex-1 text-sm  ${textColor}`}>
+                  <Text className={`flex-1 text-xs  ${textColor}`}>
                     No signup needed! Listen to a short ad and make free calls
                     instantly.
                   </Text>
@@ -249,13 +249,13 @@ export default function Index() {
 
               {/* Call Button & Footer */}
               <View
-                className={`px-4 py-4  ${isDarkMode ? "bg-gray-950" : "bg-gray-50"}`}
+                className={`px-1 py-4  ${isDarkMode ? "bg-gray-950" : "bg-gray-50"}`}
               >
                 <TouchableOpacity
                   disabled={!canCall}
                   activeOpacity={0.8}
-                  className={`w-full flex-row items-center justify-center gap-2 rounded-xl py-3.5 ${
-                    canCall ? "bg-orange-600" : `${isDarkMode ? "bg-gray-700" : "bg-gray-300"}`
+                  className={`w-full flex-row items-center justify-center gap-2 rounded-xl py-3 ${
+                    canCall ? "bg-orange-600" : `${isDarkMode ? "bg-gray-700" : "bg-gray-200"}`
                   }`}
                 >
                   <Ionicons
@@ -265,7 +265,7 @@ export default function Index() {
                   />
                   <Text
                     className={`font-bold text-base ${
-                      canCall ? "text-white" : `${isDarkMode ? "text-gray-400" : "text-gray-600"}`
+                      canCall ? "text-white" : `${isDarkMode ? "text-gray-400" : "text-gray-500"}`
                     }`}
                   >
                     Start Free Call

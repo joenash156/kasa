@@ -542,7 +542,7 @@ export default function LoginScreen() {
                 <TouchableOpacity
                   onPress={handleOtpVerify}
                   disabled={!verifyButtonEnabled}
-                  className={`w-full flex-row items-center justify-center gap-2 rounded-xl py-4 ${canVerifyOtp ? "bg-orange-600/90" : theme === "dark" ? "bg-gray-700" : "bg-gray-200"}`}
+                  className={`w-full flex-row items-center justify-center gap-2 rounded-xl py-3.5 ${canVerifyOtp ? "bg-orange-600/90" : theme === "dark" ? "bg-gray-700" : "bg-gray-200"}`}
                   activeOpacity={0.9}
                 >
                   {loading ? (
