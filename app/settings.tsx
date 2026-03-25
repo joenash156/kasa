@@ -35,7 +35,7 @@ export default function SettingsScreen() {
     <View className={`flex-1 ${bgColor}`}>
       {/* Header */}
       <View
-        className={`flex-row items-center justify-between px-2 py-4 border-b ${borderColor}`}
+        className={`flex-row items-center justify-between px-2 py-4 border-b ${borderColor} ${isDarkMode ? "bg-gray-950" : "bg-white"}`}
       >
         <Text className={`text-2xl font-bold ${textColor}`}>Settings</Text>
         <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>

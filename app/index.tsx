@@ -242,7 +242,7 @@ export default function Index() {
               className="mt-8 px-4"
             >
               <View
-                className={`border rounded-xl px-4 py-3 ${borderColor} ${isDarkMode ? "bg-gray-800" : "bg-orange-50"}`}
+                className={`px-4 py-3`}
               >
                 <Text className={`text-sm text-center ${secondaryTextColor}`}>
                   Do you want to keep your call logs?{" "}

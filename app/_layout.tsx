@@ -1,18 +1,16 @@
 import RootLayoutWrapper from "@/components/RootLayoutWrapper";
+import { ThemeAwareStatusBar } from "@/components/ThemeAwareStatusBar";
+import { ThemeAwareNavigationBar } from "@/components/ThemeAwareNavigationBar";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import "@/global.css";
-import { StatusBar } from "expo-status-bar";
 
 export default function RootLayout() {
   return (
     <ThemeProvider>
+      <ThemeAwareStatusBar />
+      <ThemeAwareNavigationBar />
       <AuthProvider>
-        <StatusBar
-          style="light"
-          backgroundColor="#ea580c"
-          translucent={false}
-        />
         <RootLayoutWrapper />
       </AuthProvider>
     </ThemeProvider>

@@ -11,18 +11,16 @@ type AppHeaderProps = {
 export default function Header({ onPressSettings }: AppHeaderProps) {
   const { theme } = useTheme();
   const isDarkMode = theme === "dark";
-  // const borderColor = isDarkMode ? "border-gray-800" : "border-gray-50";
-  const bgColor = isDarkMode ? "bg-gray-800" : "bg-white";
+  // const borderColor = isDarkMode ? "border-gray-800" : "gray";
+  const bgColor = isDarkMode ? "bg-gray-950" : "bg-white";
 
   return (
     <View
       className={`px-4 py-3 ${bgColor}`}
-      style={{
-        borderWidth: 0.3,
-        borderColor: isDarkMode
-          ? "rgba(55, 65, 81, 0.6)"
-          : "rgba(201, 201, 201, 0.99)",
-      }}
+      // style={{
+      //   borderBottomWidth: 0.3,
+      //   borderColor
+      // }}
     >
       <View className="flex-row items-center justify-between">
         <View className="">
