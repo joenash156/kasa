@@ -2,7 +2,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import {} from "expo-image";
 import React from "react";
-import { Dimensions, Image, TouchableOpacity, View } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 
 type AppHeaderProps = {
   onPressSettings?: () => void;
@@ -27,7 +27,7 @@ export default function Header({ onPressSettings }: AppHeaderProps) {
       <View className="flex-row items-center justify-between">
         <View className="w-28 h-10 items-center justify-center">
           <Image
-            source={require("../assets/images/logo.png")}
+            source={require("../assets/images/kasa-logo.png")}
             className="w-28 h-10 object-contain"
           />
         </View>
