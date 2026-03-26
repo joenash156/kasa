@@ -1,5 +1,5 @@
 import { useTheme } from "@/context/ThemeContext";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import {} from "expo-image";
 import React from "react";
 import { Image, TouchableOpacity, View } from "react-native";
@@ -37,9 +37,9 @@ export default function Header({ onPressSettings }: AppHeaderProps) {
           onPress={onPressSettings}
           className="h-10 w-12 items-center justify-center"
         >
-          <Ionicons
-            name="settings-outline"
-            size={22}
+          <Feather
+            name="menu"
+            size={26}
             color={isDarkMode ? "#ffffff" : "#4B5563"}
           />
         </TouchableOpacity>
