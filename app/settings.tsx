@@ -43,16 +43,20 @@ export default function SettingsScreen() {
     <View className={`flex-1 ${bgColor}`}>
       {/* Header */}
       <View
-        className={`flex-row items-center justify-between px-3 py-4 ${isDarkMode ? "bg-gray-950" : "bg-white"}`}
+        className={`flex-row items-center px-3 py-3 ${isDarkMode ? "bg-gray-950" : "bg-white"}`}
       >
-        <Text className={`text-2xl font-bold ${textColor}`}>Settings</Text>
-        <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          activeOpacity={0.7}
+          className="h-10 w-10 mr-6 items-center justify-center 0"
+        >
           <Ionicons
-            name="close-outline"
+            name="chevron-back"
             size={26}
             color={isDarkMode ? "#fff" : "#1F2937"}
           />
         </TouchableOpacity>
+        <Text className={`text-2xl font-bold ${textColor}`}>Settings</Text>
       </View>
 
       <ScrollView

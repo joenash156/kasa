@@ -50,8 +50,6 @@ export default function LoginScreen() {
     () => [
       require("../../assets/images/person1.png"),
       require("../../assets/images/person2.png"),
-      require("../../assets/images/person3.png"),
-      require("../../assets/images/person4.png"),
     ],
     [],
   );

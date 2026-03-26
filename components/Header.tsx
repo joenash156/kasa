@@ -18,7 +18,7 @@ export default function Header({ onPressSettings }: AppHeaderProps) {
 
   return (
     <View
-      className={`pr-3 py-2 ${bgColor}`}
+      className={`pr-3 py-3 ${bgColor}`}
       // style={{
       //   borderBottomWidth: 0.3,
       //   borderColor
