@@ -13,6 +13,7 @@ import {
   TextInput,
   TouchableOpacity,
   useWindowDimensions,
+  StyleSheet,
   View,
 } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
@@ -197,6 +198,17 @@ export default function LoginScreen() {
                       left: 0,
                     }}
                   />
+                  <View
+                  pointerEvents="none"
+                  style={[
+                    StyleSheet.absoluteFill,
+                    {
+                      backgroundColor: isDarkMode
+                        ? "rgba(3, 7, 18, 0.45)"
+                        : "rgba(133, 133, 133, 0.35)",
+                    },
+                  ]}
+                />
                 </View>
               ))}
             </ScrollView>

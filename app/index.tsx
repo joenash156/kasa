@@ -122,7 +122,7 @@ export default function Index() {
                     {
                       backgroundColor: isDarkMode
                         ? "rgba(3, 7, 18, 0.45)"
-                        : "rgba(255, 255, 255, 0.35)",
+                        : "rgba(133, 133, 133, 0.35)",
                     },
                   ]}
                 />
