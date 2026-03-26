@@ -16,13 +16,13 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  useWindowDimensions,
+  // useWindowDimensions,
 } from "react-native";
 import Animated, {
   Easing,
   FadeInDown,
-  interpolate,
-  useAnimatedStyle,
+  // interpolate,
+  // useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withTiming,
@@ -31,7 +31,7 @@ import Animated, {
 export default function Index() {
   const router = useRouter();
   const { theme } = useTheme();
-  const { width } = useWindowDimensions();
+  // const { width } = useWindowDimensions();
   const [yourNumber, setYourNumber] = useState("");
   const [friendNumber, setFriendNumber] = useState("");
   const mascotBounce = useSharedValue(0);
@@ -61,8 +61,8 @@ export default function Index() {
   };
 
   const canCall = yourNumber.length >= 9 && friendNumber.length >= 9;
-  const mascotWidth = Math.max(120, Math.min(width * 0.42, 190));
-  const mascotHeight = mascotWidth * 1.42;
+  // const mascotWidth = Math.max(120, Math.min(width * 0.42, 190));
+  // const mascotHeight = mascotWidth * 1.42;
 
   useEffect(() => {
     mascotBounce.value = withRepeat(
@@ -72,11 +72,11 @@ export default function Index() {
     );
   }, [mascotBounce]);
 
-  const mascotAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateY: interpolate(mascotBounce.value, [0, 1], [0, -8]) },
-    ],
-  }));
+  // const mascotAnimatedStyle = useAnimatedStyle(() => ({
+  //   transform: [
+  //     { translateY: interpolate(mascotBounce.value, [0, 1], [0, -8]) },
+  //   ],
+  // }));
 
   const { height } = Dimensions.get("window");
   const heroHeight = height * 0.45;
