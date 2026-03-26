@@ -9,7 +9,9 @@ const InitialLayout = () => {
         animation: "ios_from_right",
         gestureDirection: "horizontal",
         gestureEnabled: true,
+        
       }}
+
     />
   );
 };

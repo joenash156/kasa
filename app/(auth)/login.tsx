@@ -1,31 +1,34 @@
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Image,
   KeyboardAvoidingView,
-  NativeSyntheticEvent,
   NativeScrollEvent,
+  NativeSyntheticEvent,
   Platform,
   ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   useWindowDimensions,
-  StyleSheet,
   View,
 } from "react-native";
+import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import { getThemeColors } from "../../theme/colors";
 
 export default function LoginScreen() {
+  const router = useRouter();
+  const { setUser } = useAuth();
   const { height, width } = useWindowDimensions();
   const { theme } = useTheme();
   const isDarkMode = theme === "dark";
   const colors = getThemeColors(theme === "dark");
   const screenBgColor = isDarkMode ? "#030712" : "#F9FAFB";
-  /** Inline fallbacks so UI stays visible if NativeWind classNames fail on this route. */
   const textPrimary = isDarkMode ? "#F9FAFB" : "#111827";
   const textSecondary = isDarkMode ? "#D1D5DB" : "#4B5563";
   const inputTextColor = isDarkMode ? "#F9FAFB" : "#111827";
@@ -36,6 +39,7 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [isManualScrolling, setIsManualScrolling] = useState(false);
+  const [showOtp, setShowOtp] = useState(false);
   const heroScrollRef = useRef<ScrollView>(null);
 
   const phoneDigits = phoneNumber.replace(/\D/g, "");
@@ -75,7 +79,9 @@ export default function LoginScreen() {
 
   const onHeroMomentumEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const x = e.nativeEvent.contentOffset.x;
-    setCarouselIndex(Math.min(heroImages.length - 1, Math.max(0, Math.round(x / width))));
+    setCarouselIndex(
+      Math.min(heroImages.length - 1, Math.max(0, Math.round(x / width))),
+    );
     setIsManualScrolling(false);
   };
 
@@ -110,8 +116,15 @@ export default function LoginScreen() {
     // Simulate verification
     setTimeout(() => {
       setLoading(false);
-      // Navigate to home
-      console.log("Login successful!");
+      // Set user in context with phone number FIRST
+      setUser({
+        phoneNumber: phoneNumber,
+        isLoggedIn: true,
+      });
+      // Navigate back to root - auth state will trigger redirect to tabs
+      setTimeout(() => {
+        router.replace("/");
+      }, 100);
     }, 1200);
   };
 
@@ -197,16 +210,16 @@ export default function LoginScreen() {
                     }}
                   />
                   <View
-                  pointerEvents="none"
-                  style={[
-                    StyleSheet.absoluteFill,
-                    {
-                      backgroundColor: isDarkMode
-                        ? "rgba(3, 7, 18, 0.45)"
-                        : "rgba(133, 133, 133, 0.35)",
-                    },
-                  ]}
-                />
+                    pointerEvents="none"
+                    style={[
+                      StyleSheet.absoluteFill,
+                      {
+                        backgroundColor: isDarkMode
+                          ? "rgba(3, 7, 18, 0.45)"
+                          : "rgba(133, 133, 133, 0.35)",
+                      },
+                    ]}
+                  />
                 </View>
               ))}
             </ScrollView>
@@ -494,10 +507,6 @@ export default function LoginScreen() {
                         borderColor: theme === "dark" ? "#212121" : "#f5f5f5",
                       }}
                     >
-                      {/* <View className="h-9 w-9 items-center justify-center bg-orange-100" style={{ borderRadius: 20 }}>
-                        <Ionicons name="shield-checkmark" size={17} color="#EA580C" />
-                      </View>
-                      <View className="h-8 w-px bg-gray-200" /> */}
                       <View className="flex-1 flex-row items-center">
                         <TextInput
                           placeholder="••••••"
@@ -515,9 +524,20 @@ export default function LoginScreen() {
                           value={otpCode}
                           onChangeText={handleOtpChange}
                           editable={!loading}
-                          secureTextEntry
+                          secureTextEntry={!showOtp}
                         />
                       </View>
+                      <TouchableOpacity
+                        onPress={() => setShowOtp(!showOtp)}
+                        activeOpacity={0.7}
+                        className="h-10 w-10 items-center justify-center"
+                      >
+                        <Ionicons
+                          name={showOtp ? "eye-off" : "eye"}
+                          size={20}
+                          color={colors.iconPrimary}
+                        />
+                      </TouchableOpacity>
                     </View>
 
                     {/* OTP Visual Indicators */}

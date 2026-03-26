@@ -82,16 +82,15 @@ export default function SettingsScreen() {
             {/* User Info */}
             <View className={`flex-row items-center gap-4 px-3 py-4`}>
               <View
-                className={`h-12 w-12 items-center justify-center rounded-full ${
-                  user
-                    ? "bg-gradient-to-br from-orange-400 to-orange-600"
-                    : "bg-gray-300"
+                className={`h-12 w-12 items-center justify-center ${
+                 isDarkMode ? "bg-gray-800" : "bg-gray-200"
                 }`}
+                style={{ borderRadius: 30 }}
               >
                 <Ionicons
                   name={user ? "person" : "person-outline"}
                   size={20}
-                  color="white"
+                  color={`${isDarkMode ? "#6B7280" : "#FFFFFF"}`}
                 />
               </View>
 
@@ -115,19 +114,7 @@ export default function SettingsScreen() {
               )}
             </View>
 
-            {/* Logout Button */}
-            {user && (
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={handleLogout}
-                className={`flex-row items-center gap-3 px-3 py-4`}
-              >
-                <Ionicons name="log-out-outline" size={18} color="#EF4444" />
-                <Text className="text-sm font-semibold text-red-500">
-                  Logout
-                </Text>
-              </TouchableOpacity>
-            )}
+            
           </View>
         </View>
 
@@ -345,22 +332,19 @@ export default function SettingsScreen() {
               </View>
             </View>
 
-            {/* Build Info */}
-            {/* <View className={`flex-row items-center px-3 py-4`}>
-              <View className="flex-1 flex-row items-center gap-3">
-                <View className="h-10 w-10 items-center justify-center rounded-full bg-indigo-100">
-                  <Ionicons name="code-working" size={20} color="#6366F1" />
-                </View>
-                <View className="flex-1">
-                  <Text className={`text-sm font-semibold ${textColor}`}>
-                    Platform
-                  </Text>
-                  <Text className={`text-xs mt-0.5 ${secondaryTextColor}`}>
-                    React Native + Expo
-                  </Text>
-                </View>
-              </View>
-            </View> */}
+            {/* Logout Button */}
+            {user && (
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={handleLogout}
+                className={`flex-row items-center justify-center mt-2 gap-3 px-3 py-4`}
+              >
+                <Ionicons name="log-out-outline" size={18} color="#EF4444" />
+                <Text className="text-sm font-semibold text-red-500">
+                  Logout
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 
