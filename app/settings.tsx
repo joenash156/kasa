@@ -4,7 +4,7 @@ import { getThemeColors } from "@/theme/colors";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
-import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
+import { Image, Linking, ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 
 const APP_VERSION = "1.0.0";
 const APP_NAME = "Kasa";
@@ -290,9 +290,19 @@ export default function SettingsScreen() {
 
         {/* Footer */}
         <View className="px-3 py-2">
-          <Text className={`text-xs text-center ${secondaryTextColor}`}>
-            Made by {APP_NAME} Team
-          </Text>
+          <View className="flex-row w-full gap-1 items-center justify-center mx-auto">
+            <Text className={`text-xs text-center ${secondaryTextColor}`}>
+              Made by
+            </Text>
+            <Image source={require("../assets/images/dlp-logo.png")} className="w-10 h-full" />
+            <Text 
+              className={`text-xs text-center ${secondaryTextColor}`}
+              onPress={() => Linking.openURL('https://www.dlp.africa')}            
+              style={{ textDecorationLine: 'underline' }}
+            >
+              dlp africa
+            </Text>
+          </View>
           <Text className={`text-xs text-center mt-1 ${secondaryTextColor}`}>
             © 2024-2026 All rights reserved
           </Text>
