@@ -6,9 +6,9 @@ const InitialLayout = () => {
     <Stack
       screenOptions={{
         headerShown: false,
-        animation: "fade_from_bottom",
-        animationDuration: 10,
-        gestureDirection: 'horizontal',
+        animation: "ios_from_right",
+        gestureDirection: "horizontal",
+        gestureEnabled: true,
       }}
     />
   );
