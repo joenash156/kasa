@@ -4,7 +4,15 @@ import { getThemeColors } from "@/theme/colors";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Image, Linking, ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  Linking,
+  ScrollView,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const APP_VERSION = "1.0.0";
 const APP_NAME = "Kasa";
@@ -68,10 +76,7 @@ export default function SettingsScreen() {
             }}
           >
             {/* User Info */}
-            <View
-              className={`flex-row items-center gap-4 px-3 py-4`}
-
-            >
+            <View className={`flex-row items-center gap-4 px-3 py-4`}>
               <View
                 className={`h-12 w-12 items-center justify-center rounded-full ${
                   user
@@ -138,9 +143,7 @@ export default function SettingsScreen() {
             }}
           >
             {/* Theme Toggle */}
-            <View
-              className={`flex-row items-center justify-between px-3 py-4`}
-            >
+            <View className={`flex-row items-center justify-between px-3 py-4`}>
               <View className="flex-1 flex-row items-center gap-3">
                 <View className="h-10 w-10 items-center justify-center rounded-full bg-orange-100">
                   <Ionicons
@@ -194,6 +197,75 @@ export default function SettingsScreen() {
                 thumbColor="#FFA500"
               />
             </View> */}
+          </View>
+        </View>
+
+        {/* Contact Section */}
+        <View className="px-3 pt-8">
+          <Text
+            className={`text-sm font-semibold uppercase tracking-wider ${secondaryTextColor} mb-3`}
+          >
+            Contact
+          </Text>
+
+          <View
+            className={`rounded-2xl overflow-hidden ${cardBg}`}
+            style={{
+              borderWidth: 1,
+              borderColor: isDarkMode ? "#212121" : "#f7f7f7",
+            }}
+          >
+            {/* Email */}
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => Linking.openURL("mailto:info@delaphonegh.com")}
+              className={`flex-row items-center justify-between px-3 py-4`}
+            >
+              <View className="flex-1 flex-row items-center gap-3">
+                <View className="h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+                  <Ionicons name="mail" size={20} color="#3B82F6" />
+                </View>
+                <View className="flex-1">
+                  <Text className={`text-sm font-semibold ${textColor}`}>
+                    Email
+                  </Text>
+                  <Text className={`text-xs mt-0.5 ${secondaryTextColor}`}>
+                    info@delaphonegh.com
+                  </Text>
+                </View>
+              </View>
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={isDarkMode ? "#666" : "#ccc"}
+              />
+            </TouchableOpacity>
+
+            {/* Phone */}
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => Linking.openURL("tel:+233551660436")}
+              className={`flex-row items-center justify-between px-3 py-4`}
+            >
+              <View className="flex-1 flex-row items-center gap-3">
+                <View className="h-10 w-10 items-center justify-center rounded-full bg-green-100">
+                  <Ionicons name="call" size={20} color="#10B981" />
+                </View>
+                <View className="flex-1">
+                  <Text className={`text-sm font-semibold ${textColor}`}>
+                    Phone
+                  </Text>
+                  <Text className={`text-xs mt-0.5 ${secondaryTextColor}`}>
+                    +233 551 660 436
+                  </Text>
+                </View>
+              </View>
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={isDarkMode ? "#666" : "#ccc"}
+              />
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -294,17 +366,20 @@ export default function SettingsScreen() {
             <Text className={`text-xs text-center ${secondaryTextColor}`}>
               Made by
             </Text>
-            <Image source={require("../assets/images/dlp-logo.png")} className="w-10 h-full" />
-            <Text 
+            <Image
+              source={require("../assets/images/dlp-logo.png")}
+              className="w-10 h-full"
+            />
+            <Text
               className={`text-xs text-center ${secondaryTextColor}`}
-              onPress={() => Linking.openURL('https://www.dlp.africa')}            
-              style={{ textDecorationLine: 'underline' }}
+              onPress={() => Linking.openURL("https://www.dlp.africa")}
+              style={{ textDecorationLine: "underline" }}
             >
               dlp africa
             </Text>
           </View>
           <Text className={`text-xs text-center mt-1 ${secondaryTextColor}`}>
-            © 2024-2026 All rights reserved
+            © 2026 All rights reserved
           </Text>
         </View>
       </ScrollView>
