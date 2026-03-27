@@ -90,7 +90,7 @@ export default function CallForm({
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
-          contentContainerStyle={{ flexGrow: 1, paddingBottom: 70 }}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 60 }}
         >
           <View className="flex-1">
             {/* Hero Section with Mascot */}

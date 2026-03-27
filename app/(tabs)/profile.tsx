@@ -1,4 +1,5 @@
 import Header from "@/components/Header";
+import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { getThemeColors } from "@/theme/colors";
 import { Ionicons } from "@expo/vector-icons";
@@ -39,7 +40,10 @@ function SelectField({
 
   return (
     <View className="mb-4">
-      <Text style={{ color: secondaryText }} className="mb-1.5 text-xs font-semibold uppercase">
+      <Text
+        style={{ color: secondaryText }}
+        className="mb-1.5 text-xs font-semibold uppercase"
+      >
         {label}
       </Text>
 
@@ -48,7 +52,11 @@ function SelectField({
         className="flex-row items-center justify-between rounded-xl px-3 py-3"
         style={{ backgroundColor: fieldBg, borderColor, borderWidth: 1 }}
       >
-        <Text style={{ color: value === "Select phone type" ? secondaryText : primaryText }}>
+        <Text
+          style={{
+            color: value === "Select phone type" ? secondaryText : primaryText,
+          }}
+        >
           {value}
         </Text>
         <Ionicons
@@ -96,12 +104,13 @@ function SelectField({
 export default function ProfileScreen() {
   const router = useRouter();
   const { theme } = useTheme();
+  const { user } = useAuth();
   const isDarkMode = theme === "dark";
   const colors = getThemeColors(isDarkMode);
   const primaryText = isDarkMode ? "#F9FAFB" : "#111827";
   const secondaryText = isDarkMode ? "#9CA3AF" : "#6B7280";
   const cardBg = isDarkMode ? "#111827" : "#FFFFFF";
-  const inputBg = isDarkMode ? "#0F172A" : "#FFFFFF";
+  // const inputBg = isDarkMode ? "#0F172A" : "#FFFFFF";
   const inputBorder = isDarkMode ? "#191f29" : "#f2f3f5";
 
   const [ageGroup, setAgeGroup] = React.useState("18–24");
@@ -109,7 +118,9 @@ export default function ProfileScreen() {
   const [language, setLanguage] = React.useState("Twi");
   const [phoneType, setPhoneType] = React.useState("Select phone type");
   const [region, setRegion] = React.useState("Greater Accra");
-  const [expandedSelect, setExpandedSelect] = React.useState<string | null>(null);
+  const [expandedSelect, setExpandedSelect] = React.useState<string | null>(
+    null,
+  );
 
   const toggleSelect = (key: string) => {
     setExpandedSelect((prev) => (prev === key ? null : key));
@@ -121,33 +132,53 @@ export default function ProfileScreen() {
 
   return (
     <View className={`flex-1 ${colors.bg}`}>
-      <Header title="My Profile" showLogo={false} onPressSettings={handleSettings} />
+      <Header
+        title="My Profile"
+        showLogo={false}
+        onPressSettings={handleSettings}
+      />
 
       <ScrollView
         className={`flex-1 ${colors.bg}`}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 12, paddingTop: 14, paddingBottom: 88 }}
+        contentContainerStyle={{
+          paddingHorizontal: 12,
+          paddingTop: 14,
+          paddingBottom: 88,
+        }}
       >
-        <View className="mb-5 rounded-2xl px-4 py-4" style={{ backgroundColor: cardBg }}>
+        <View
+          className="mb-5 rounded-2xl px-4 py-4"
+          style={{ backgroundColor: cardBg }}
+        >
           <Text style={{ color: primaryText }} className="">
             Checkout your profile
           </Text>
-          <Text style={{ color: secondaryText }} className="mt-1.5 text-sm leading-5">
-            Help us personalise your experience by completing your profile.
+          <Text
+            style={{ color: secondaryText }}
+            className="mt-1.5 text-sm leading-5"
+          >
+            Help us personalize your experience by completing your profile.
           </Text>
         </View>
 
-        <View className="mb-4 rounded-2xl px-4 py-4" style={{ backgroundColor: cardBg }}>
+        <View
+          className="mb-4 rounded-2xl px-4 py-4"
+          style={{ backgroundColor: cardBg }}
+        >
           <Text style={{ color: primaryText }} className="text-base font-bold">
             Account
           </Text>
 
           <View className="mt-4">
-            <Text style={{ color: secondaryText }} className="mb-1.5 text-xs font-semibold uppercase">
+            <Text
+              style={{ color: secondaryText }}
+              className="mb-1.5 text-xs font-semibold uppercase"
+            >
               Phone Number
             </Text>
             <TextInput
-              value="233551660436"
+              value={`+233${user?.phoneNumber}`}
               editable={false}
               className="rounded-xl px-3 py-3"
               style={{
@@ -160,11 +191,14 @@ export default function ProfileScreen() {
           </View>
 
           <View className="mt-4">
-            <Text style={{ color: secondaryText }} className="mb-1.5 text-xs font-semibold uppercase">
+            <Text
+              style={{ color: secondaryText }}
+              className="mb-1.5 text-xs font-semibold uppercase"
+            >
               Country Code
             </Text>
             <TextInput
-              value="233"
+              value={`+233`}
               editable={false}
               className="rounded-xl px-3 py-3"
               style={{
@@ -177,7 +211,10 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        <View className="rounded-2xl px-4 py-4" style={{ backgroundColor: cardBg }}>
+        <View
+          className="rounded-2xl px-4 py-4"
+          style={{ backgroundColor: cardBg }}
+        >
           <Text style={{ color: primaryText }} className="text-base font-bold">
             Personal Information
           </Text>
@@ -209,27 +246,35 @@ export default function ProfileScreen() {
               isDarkMode={isDarkMode}
             />
 
-            <View className="mb-4">
-              <Text
-                style={{ color: secondaryText }}
-                className="mb-1.5 text-xs font-semibold uppercase"
-              >
-                Region
-              </Text>
-              <TextInput
-                value={region}
-                onChangeText={setRegion}
-                placeholder="Enter your region"
-                placeholderTextColor={secondaryText}
-                className="rounded-xl px-3 py-3"
-                style={{
-                  backgroundColor: inputBg,
-                  borderWidth: 1,
-                  borderColor: inputBorder,
-                  color: primaryText,
-                }}
-              />
-            </View>
+            <SelectField
+              label="Region"
+              value={region}
+              options={[
+                "Greater Accra",
+                "Central",
+                "Western",
+                "Northern",
+                "Ashanti",
+                "Eastern",
+                "Volta",
+                "Ahafo",
+                "Bono",
+                "Bono East",
+                "Upper East",
+                "Upper West",
+                "Savannah",
+                "North East",
+                "Oti",
+                "Western North",
+              ]}
+              expanded={expandedSelect === "region"}
+              onToggle={() => toggleSelect("region")}
+              onSelect={(value) => {
+                setRegion(value);
+                setExpandedSelect(null);
+              }}
+              isDarkMode={isDarkMode}
+            />
 
             <SelectField
               label="Language Preference"
@@ -247,7 +292,12 @@ export default function ProfileScreen() {
             <SelectField
               label="Phone Type"
               value={phoneType}
-              options={["Select phone type", "Android", "iPhone", "Feature Phone"]}
+              options={[
+                "Select phone type",
+                "Android",
+                "iPhone",
+                "Feature Phone",
+              ]}
               expanded={expandedSelect === "phoneType"}
               onToggle={() => toggleSelect("phoneType")}
               onSelect={(value) => {
@@ -263,7 +313,9 @@ export default function ProfileScreen() {
           className="mt-5 h-12 items-center justify-center rounded-xl bg-orange-600"
           activeOpacity={0.88}
         >
-          <Text className="text-base font-semibold text-white">Save Profile</Text>
+          <Text className="text-base font-semibold text-white">
+            Save Profile
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
