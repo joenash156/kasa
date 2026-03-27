@@ -1,14 +1,12 @@
 import { useTheme } from "@/context/ThemeContext";
-import { getThemeColors } from "@/theme/colors";
 import { Ionicons } from "@expo/vector-icons";
+//import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
 import React from "react";
-import { useWindowDimensions } from "react-native";
 
 export default function TabsLayout() {
   const { theme } = useTheme();
   const isDarkMode = theme === "dark";
-  const colors = getThemeColors(isDarkMode);
 
   const tabBarHeight = 55;
 
@@ -19,14 +17,17 @@ export default function TabsLayout() {
         tabBarHideOnKeyboard: false,
         tabBarStyle: {
           height: tabBarHeight,
-          backgroundColor: isDarkMode ? "#060c1c" : "#FFFFFF",
-          shadowColor: isDarkMode ? "#000" : "#fff",
-          shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: isDarkMode ? 0.3 : 0.1,
-          shadowRadius: 4,
-          marginBottom: 6,
-          marginHorizontal: 12,
+          backgroundColor: isDarkMode ? "#202229e6" : "#ebebebd9",
+          borderTopWidth: 0,
+          paddingVertical: 6,
+          paddingHorizontal: 12,
+          position: "absolute",
+          bottom: 12,
+          left: 0,
+          right: 0,
           borderRadius: 30,
+          elevation: 0,
+          shadowOpacity: 0,
         },
         tabBarActiveTintColor: "#EA580C",
         tabBarInactiveTintColor: isDarkMode ? "#cfcfcf" : "#9CA3AF",
