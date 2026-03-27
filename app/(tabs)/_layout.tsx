@@ -8,7 +8,7 @@ export default function TabsLayout() {
   const { theme } = useTheme();
   const isDarkMode = theme === "dark";
 
-  const tabBarHeight = 50;
+  const tabBarHeight = 52;
 
   return (
     <Tabs
@@ -17,7 +17,7 @@ export default function TabsLayout() {
         tabBarHideOnKeyboard: false,
         tabBarLabelStyle: {
           fontSize: 10,
-          marginTop: -4, 
+          marginTop: -3,
         },
         tabBarStyle: {
           height: tabBarHeight,
@@ -31,6 +31,7 @@ export default function TabsLayout() {
           borderRadius: 30,
           elevation: 0,
           shadowOpacity: 0,
+          marginHorizontal: 8,
         },
         tabBarActiveTintColor: "#EA580C",
         tabBarInactiveTintColor: isDarkMode ? "#cfcfcf" : "#393d45",
@@ -40,8 +41,8 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: "Call",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="call-outline" size={21} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "call" : "call-outline"} size={21} color={color} />
           ),
         }}
       />
@@ -49,8 +50,8 @@ export default function TabsLayout() {
         name="logs"
         options={{
           title: "Logs",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="document-text-outline" size={21} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "document-text" : "document-text-outline"} size={21} color={color} />
           ),
         }}
       />
@@ -58,8 +59,8 @@ export default function TabsLayout() {
         name="interests"
         options={{
           title: "Interests",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="heart-outline" size={21} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "heart" : "heart-outline"} size={22} color={color} />
           ),
         }}
       />
@@ -67,8 +68,8 @@ export default function TabsLayout() {
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="person-outline" size={21} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "person" : "person-outline"} size={21} color={color} />
           ),
         }}
       />
