@@ -32,8 +32,8 @@ export default function Header({
             />
           </View>
         ) : (
-          <View className="h-10 justify-center px-2">
-            <Text style={{ color: titleColor }} className="text-xl font-bold">
+          <View className="h-10 justify-center px-3">
+            <Text style={{ color: titleColor }} className="text-2xl font-bold">
               {title ?? "Kasa"}
             </Text>
           </View>

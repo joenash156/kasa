@@ -1,99 +1,138 @@
 import Header from "@/components/Header";
+import LogCard, { CallLogItem } from "@/components/LogCard";
 import { useTheme } from "@/context/ThemeContext";
 import { getThemeColors } from "@/theme/colors";
-import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import { FlatList, ListRenderItem, Text, View } from "react-native";
 
 export default function LogsScreen() {
+  const router = useRouter();
   const { theme } = useTheme();
   const isDarkMode = theme === "dark";
   const colors = getThemeColors(isDarkMode);
-  const logs = [
+  const primaryTextColor = isDarkMode ? "#F9FAFB" : "#111827";
+  const secondaryTextColor = isDarkMode ? "#9CA3AF" : "#6B7280";
+
+  const handleSettings = () => {
+    router.push("/settings");
+  };
+
+  const logs: CallLogItem[] = [
     {
       id: "1",
       contact: "+233 24 123 4567",
       duration: "03:18",
-      time: "Today, 09:41 AM",
+      date: "March 27, 2025, 09:41 AM",
+      campaign: "Kasa Free Call",
+      type: "Ad",
       status: "completed",
     },
     {
       id: "2",
       contact: "+233 55 987 1234",
       duration: "00:42",
-      time: "Today, 07:02 AM",
+      date: "March 27, 2025, 07:02 AM",
+      campaign: "Survey Call",
+      type: "Survey",
       status: "missed",
     },
     {
       id: "3",
       contact: "+233 20 100 2000",
       duration: "12:09",
-      time: "Yesterday, 08:14 PM",
+      date: "March 26, 2025, 08:14 PM",
+      campaign: "Kasa Free Call",
+      type: "Ad",
       status: "completed",
+    },
+    {
+      id: "4",
+      contact: "+233 30 555 8899",
+      duration: "05:42",
+      date: "March 26, 2025, 03:30 PM",
+      campaign: "Survey Call",
+      type: "Survey",
+      status: "completed",
+    },
+    {
+      id: "5",
+      contact: "+233 50 222 3344",
+      duration: "01:15",
+      date: "March 25, 2025, 10:22 AM",
+      campaign: "Kasa Free Call",
+      type: "Ad",
+      status: "missed",
+    },
+    {
+      id: "6",
+      contact: "+233 24 999 5555",
+      duration: "08:33",
+      date: "March 25, 2025, 09:05 AM",
+      campaign: "Survey Call",
+      type: "Survey",
+      status: "completed",
+    },
+    {
+      id: "7",
+      contact: "+233 40 444 1111",
+      duration: "02:47",
+      date: "March 24, 2025, 06:18 PM",
+      campaign: "Kasa Free Call",
+      type: "Ad",
+      status: "completed",
+    },
+    {
+      id: "8",
+      contact: "+233 55 666 7777",
+      duration: "00:28",
+      date: "March 24, 2025, 02:45 PM",
+      campaign: "Survey Call",
+      type: "Survey",
+      status: "missed",
     },
   ];
 
+  const renderLogItem: ListRenderItem<CallLogItem> = ({ item, index }) => (
+    <LogCard log={item} index={index} isDarkMode={isDarkMode} />
+  );
+
+  const listHeader = (
+    <View className="mb-8">
+      <Text style={{ color: primaryTextColor }} className="">
+        Check out your call history
+      </Text>
+      <Text style={{ color: secondaryTextColor }} className="mt-3 text-sm font-medium">
+        Total calls recorded:{" "}
+        <Text style={{ color: primaryTextColor }} className="font-semibold">
+          {logs.length}
+        </Text>
+      </Text>
+    </View>
+  );
+
   return (
     <View className={`flex-1 ${colors.bg}`}>
-      <Header title="Call Logs" showLogo={false} />
+      <Header
+        title="Call Logs"
+        showLogo={false}
+        onPressSettings={handleSettings}
+      />
 
-      <ScrollView
+      <FlatList
+        data={logs}
+        keyExtractor={(item) => item.id}
+        renderItem={renderLogItem}
+        ListHeaderComponent={listHeader}
         className={`flex-1 ${colors.bg}`}
-        contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 18 }}
+        contentContainerStyle={{
+          paddingHorizontal: 12,
+          paddingTop: 18,
+          paddingBottom: 80,
+        }}
         showsVerticalScrollIndicator={false}
-      >
-        <View className="mt-2 mb-4 rounded-2xl bg-orange-50 px-4 py-3">
-          <Text className="text-xs font-semibold uppercase tracking-wide text-orange-700">
-            Recent activity
-          </Text>
-          <Text className="mt-1 text-sm text-orange-700">
-            Your latest calls are shown here. Tap an entry to view details.
-          </Text>
-        </View>
-
-        <View className="gap-3">
-          {logs.map((log) => {
-            const isMissed = log.status === "missed";
-            return (
-              <View
-                key={log.id}
-                className={`${colors.card} rounded-2xl px-4 py-3`}
-                style={{
-                  borderWidth: 1,
-                  borderColor: isDarkMode ? "#212121" : "#f3f4f6",
-                }}
-              >
-                <View className="flex-row items-center justify-between">
-                  <View className="flex-row items-center gap-3">
-                    <View
-                      className={`h-10 w-10 items-center justify-center rounded-full ${isMissed ? "bg-red-100" : "bg-emerald-100"}`}
-                    >
-                      <Ionicons
-                        name={isMissed ? "call-outline" : "call"}
-                        size={16}
-                        color={isMissed ? "#DC2626" : "#059669"}
-                      />
-                    </View>
-                    <View>
-                      <Text className={`text-sm font-semibold ${colors.text}`}>
-                        {log.contact}
-                      </Text>
-                      <Text className={`text-xs mt-0.5 ${colors.textSecondary}`}>
-                        {log.time}
-                      </Text>
-                    </View>
-                  </View>
-                  <Text
-                    className={`text-sm font-semibold ${isMissed ? "text-red-500" : "text-emerald-600"}`}
-                  >
-                    {log.duration}
-                  </Text>
-                </View>
-              </View>
-            );
-          })}
-        </View>
-      </ScrollView>
+        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+      />
     </View>
   );
 }
