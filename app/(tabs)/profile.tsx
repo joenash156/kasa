@@ -294,9 +294,8 @@ export default function ProfileScreen() {
               value={phoneType}
               options={[
                 "Select phone type",
-                "Android",
-                "iPhone",
-                "Feature Phone",
+                "Smart Phone",
+                "Basic Phone",
               ]}
               expanded={expandedSelect === "phoneType"}
               onToggle={() => toggleSelect("phoneType")}
@@ -310,9 +309,10 @@ export default function ProfileScreen() {
         </View>
 
         <TouchableOpacity
-          className="mt-5 h-12 items-center justify-center rounded-xl bg-orange-600"
+          className="mt-5 h-12 flex-row gap-2 items-center justify-center rounded-xl bg-orange-600"
           activeOpacity={0.88}
         >
+          <Ionicons name="save-outline" size={20} color="white" />
           <Text className="text-base font-semibold text-white">
             Save Profile
           </Text>
