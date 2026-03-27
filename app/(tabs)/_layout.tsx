@@ -69,6 +69,7 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: false,
+        animation: "shift",
         tabBarLabelStyle: {
           fontSize: 10,
           marginTop: -2,
