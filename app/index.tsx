@@ -6,15 +6,15 @@ import React, { useEffect } from "react";
 
 export default function Index() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   // Redirect to tabs if user is logged in
   useEffect(() => {
-    if (user?.isLoggedIn) {
+    if (isAuthenticated) {
       // Use push instead of replace for tabs
       router.push("/(tabs)");
     }
-  }, [user?.isLoggedIn, router]);
+  }, [isAuthenticated, router]);
 
   const handleSettings = () => {
     router.push("/settings");

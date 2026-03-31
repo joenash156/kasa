@@ -10,10 +10,10 @@ export default function TabIndexScreen() {
 
   // Extract just the digits from the user's phone number
   const userPhoneNumber = useMemo(() => {
-    if (!user?.phoneNumber) return "";
+    if (!user?.phone_number) return "";
     // Remove any non-digit characters
-    return user.phoneNumber.replace(/[^0-9]/g, "");
-  }, [user?.phoneNumber]);
+    return user.phone_number.replace(/[^0-9]/g, "");
+  }, [user?.phone_number]);
 
   const handleSettings = () => {
     router.push("/settings");

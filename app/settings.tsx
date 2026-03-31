@@ -103,7 +103,7 @@ export default function SettingsScreen() {
                   </Text>
                   <Text className={`text-xs mt-1 ${secondaryTextColor}`}>
                     {user
-                      ? `${formatContact(user.phoneNumber)}`
+                      ? `${formatContact(user.phone_number)}`
                       : "Sign in to save preferences"}
                   </Text>
                 </View>

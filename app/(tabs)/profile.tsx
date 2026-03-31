@@ -184,7 +184,7 @@ export default function ProfileScreen() {
                 Phone Number
               </Text>
               <TextInput
-                value={formatContact(user?.phoneNumber || "")}
+                value={formatContact(user?.phone_number || "")}
                 editable={false}
                 className="rounded-xl px-3 py-3"
                 style={{

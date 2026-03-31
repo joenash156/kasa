@@ -1,3 +1,6 @@
+import AlertModal, { AlertConfig } from "@/components/AlertModal";
+import { ScrollGradientOverlay } from "@/components/ScrollGradientOverlay";
+import * as authService from "@/services/auth.service";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -20,7 +23,6 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import { getThemeColors } from "../../theme/colors";
-import { ScrollGradientOverlay } from "@/components/ScrollGradientOverlay";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -41,6 +43,12 @@ export default function LoginScreen() {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [isManualScrolling, setIsManualScrolling] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
+  const [alertConfig, setAlertConfig] = useState<AlertConfig>({
+    visible: false,
+    title: "",
+    message: "",
+    type: "info",
+  });
   const heroScrollRef = useRef<ScrollView>(null);
 
   const phoneDigits = phoneNumber.replace(/\D/g, "");
@@ -86,21 +94,64 @@ export default function LoginScreen() {
     setIsManualScrolling(false);
   };
 
+  const handleAlertDismiss = () => {
+    // If it was a success alert for OTP request, move to OTP step
+    if (alertConfig.type === "success" && alertConfig.title === "Success") {
+      setStep("otp");
+    }
+    setAlertConfig({ visible: false, title: "", message: "", type: "info" });
+  };
+
   const handlePhoneChange = (text: string) => {
     // Keep digits only (we render the "+" prefix in the UI)
     const cleaned = text.replace(/[^0-9]/g, "");
     setPhoneNumber(cleaned);
   };
 
-  const handlePhoneSubmit = () => {
+  const handlePhoneSubmit = async () => {
     if (!canSendOtp || loading) return;
 
     setLoading(true);
-    // Simulate sending OTP
-    setTimeout(() => {
+    try {
+      // Format phone number: remove special characters and ensure international format
+      let normalizedPhone = phoneNumber.replace(/\D/g, "");
+      if (!normalizedPhone.startsWith("233")) {
+        normalizedPhone = "233" + normalizedPhone;
+      }
+
+      // Call API to request OTP
+      const response = await authService.requestOtp(normalizedPhone);
+
+      // Check if response has data (indicating success - API returns data on 200 status)
+      if (response && response.data) {
+        // Show success alert, then move to OTP step when dismissed
+        setAlertConfig({
+          visible: true,
+          title: "Success",
+          message: "OTP sent to your phone number",
+          type: "success",
+        });
+      } else {
+        setAlertConfig({
+          visible: true,
+          title: "Error",
+          message: response?.message || "Failed to send OTP",
+          type: "error",
+        });
+      }
+    } catch (error: any) {
+      console.error("OTP request error:", error);
+      setAlertConfig({
+        visible: true,
+        title: "Error",
+        message:
+          error.response?.data?.message ||
+          "Failed to send OTP. Please try again.",
+        type: "error",
+      });
+    } finally {
       setLoading(false);
-      setStep("otp");
-    }, 1200);
+    }
   };
 
   const handleOtpChange = (text: string) => {
@@ -110,35 +161,105 @@ export default function LoginScreen() {
     }
   };
 
-  const handleOtpVerify = () => {
+  const handleOtpVerify = async () => {
     if (!canVerifyOtp || loading) return;
 
     setLoading(true);
-    // Simulate verification
-    setTimeout(() => {
-      setLoading(false);
-      // Set user in context with phone number FIRST
-      setUser({
-        phoneNumber: phoneNumber,
-        isLoggedIn: true,
+    try {
+      // Format phone number
+      let normalizedPhone = phoneNumber.replace(/\D/g, "");
+      if (!normalizedPhone.startsWith("233")) {
+        normalizedPhone = "233" + normalizedPhone;
+      }
+
+      // Call API to verify OTP
+      const response = await authService.verifyOtp({
+        phone: normalizedPhone,
+        otp: otpCode,
       });
-      // Navigate back to root - auth state will trigger redirect to tabs
-      setTimeout(() => {
+
+      // Check if response has data (indicating success)
+      if (response && response.data) {
+        // Set user in context with the response data
+        setUser({
+          id: response.data.caller_id ?? 1,
+          phone_number: phoneNumber,
+          country_code: "233",
+          opt_in: false,
+          interests: [],
+          call_count: 0,
+        });
+
+        // Navigate back to root - auth state will trigger redirect to tabs
         router.replace("/");
-      }, 100);
-    }, 1200);
+      } else {
+        setAlertConfig({
+          visible: true,
+          title: "Error",
+          message: response?.message || "Failed to verify OTP",
+          type: "error",
+        });
+      }
+    } catch (error: any) {
+      console.error("OTP verification error:", error);
+      setAlertConfig({
+        visible: true,
+        title: "Error",
+        message:
+          error.response?.data?.message || "Invalid OTP. Please try again.",
+        type: "error",
+      });
+      // Reset OTP input on failure
+      setOtpCode("");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleResendOtp = () => {
+  const handleResendOtp = async () => {
     if (loading) return;
 
     setLoading(true);
-    setOtpCode("");
-    // Simulate resending OTP
-    setTimeout(() => {
+    try {
+      // Format phone number
+      let normalizedPhone = phoneNumber.replace(/\D/g, "");
+      if (!normalizedPhone.startsWith("233")) {
+        normalizedPhone = "233" + normalizedPhone;
+      }
+
+      // Call API to resend OTP
+      const response = await authService.requestOtp(normalizedPhone);
+
+      // Check if response has data (indicating success)
+      if (response && response.data) {
+        setOtpCode("");
+        setAlertConfig({
+          visible: true,
+          title: "Success",
+          message: "OTP resent to your phone number",
+          type: "success",
+        });
+      } else {
+        setAlertConfig({
+          visible: true,
+          title: "Error",
+          message: response?.message || "Failed to resend OTP",
+          type: "error",
+        });
+      }
+    } catch (error: any) {
+      console.error("OTP resend error:", error);
+      setAlertConfig({
+        visible: true,
+        title: "Error",
+        message:
+          error.response?.data?.message ||
+          "Failed to resend OTP. Please try again.",
+        type: "error",
+      });
+    } finally {
       setLoading(false);
-      console.log("OTP resent");
-    }, 1000);
+    }
   };
 
   return (
@@ -683,6 +804,15 @@ export default function LoginScreen() {
         </View>
       </ScrollView>
       <ScrollGradientOverlay height={80} />
+
+      {/* Custom Alert Modal */}
+      <AlertModal
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        onDismiss={handleAlertDismiss}
+      />
     </KeyboardAvoidingView>
   );
 }

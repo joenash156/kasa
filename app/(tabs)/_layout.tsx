@@ -1,7 +1,8 @@
+import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
-import React from "react";
+import { Tabs, useRouter } from "expo-router";
+import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, {
   interpolate,
@@ -90,6 +91,21 @@ const styles = StyleSheet.create({
 export default function TabsLayout() {
   const { theme } = useTheme();
   const isDarkMode = theme === "dark";
+  const { isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
+
+  // Protect this route: Only authenticated users can access tabs
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      console.log("[TabsLayout] User not authenticated, redirecting to login");
+      router.replace("/(auth)/login");
+    }
+  }, [isAuthenticated, isLoading, router]);
+
+  // Don't render tabs if user is not authenticated
+  if (!isAuthenticated && !isLoading) {
+    return null;
+  }
 
   const tabBarHeight = 53;
 
