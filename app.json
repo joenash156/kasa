@@ -4,7 +4,7 @@
     "slug": "kasa",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/kasa-logo.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "kasa",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
