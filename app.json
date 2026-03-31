@@ -18,6 +18,7 @@
       },
       "edgeToEdgeEnabled": false,
       "predictiveBackGestureEnabled": false,
+      "softwareKeyboardLayoutMode": "pan",
       "package": "com.joenash156.kasa"
     },
     "web": {
