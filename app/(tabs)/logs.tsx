@@ -3,6 +3,7 @@ import LogCard, { CallLogItem } from "@/components/LogCard";
 import { ScrollGradientOverlay } from "@/components/ScrollGradientOverlay";
 import { useTheme } from "@/context/ThemeContext";
 import { getThemeColors } from "@/theme/colors";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import { FlatList, ListRenderItem, Text, View } from "react-native";
@@ -98,12 +99,90 @@ export default function LogsScreen() {
     <LogCard log={item} index={index} isDarkMode={isDarkMode} />
   );
 
+  // Calculate stats
+  const totalCalls = logs.length;
+  const lastCallDate = logs.length > 0 ? logs[0].date : "-";
+  // Sum durations in minutes (e.g. "03:18" -> 3.3)
+  const freeMinutes = logs.reduce((sum, log) => {
+    const [min, sec] = log.duration.split(":").map(Number);
+    return sum + min + sec / 60;
+  }, 0);
+
+  const StatCard = ({
+    icon,
+    label,
+    value,
+    color,
+    bg,
+  }: {
+    icon: string;
+    label: string;
+    value: string;
+    color: string;
+    bg: string;
+  }) => (
+    <View
+      style={{
+        width: "100%",
+        marginBottom: 10,
+        backgroundColor: bg,
+        borderRadius: 16,
+        padding: 12,
+        alignItems: "center",
+        flexDirection: "row",
+        gap: 12,
+      }}
+    >
+      <View
+        style={{
+          backgroundColor: color + "22",
+          borderRadius: 20,
+          padding: 6,
+        }}
+      >
+        <Ionicons name={icon as any} size={18} color={color} />
+      </View>
+      <View>
+        <Text style={{ color: color, fontWeight: "bold", fontSize: 14 }}>
+          {value}
+        </Text>
+        <Text style={{ color: secondaryTextColor, fontSize: 10, marginTop: 2 }} className="uppercase">
+          {label}
+        </Text>
+      </View>
+    </View>
+  );
+
   const listHeader = (
     <View className="mb-8">
+      {/* Stat Cards - Full Width Stack */}
+      <View style={{ flexDirection: "column", marginBottom: 18, marginTop: 0 }}>
+        <StatCard
+          icon="call"
+          label="Total Calls"
+          value={String(totalCalls)}
+          color={isDarkMode ? "#FBBF24" : "#EA580C"}
+          bg={isDarkMode ? "#18181b" : "#fff7ed"}
+        />
+        <StatCard
+          icon="calendar"
+          label="Last Call"
+          value={lastCallDate}
+          color={isDarkMode ? "#60A5FA" : "#2563EB"}
+          bg={isDarkMode ? "#172554" : "#eff6ff"}
+        />
+        <StatCard
+          icon="gift"
+          label="Free Minutes Earned"
+          value={`${freeMinutes.toFixed(1)} min`}
+          color={isDarkMode ? "#10B981" : "#059669"}
+          bg={isDarkMode ? "#052e16" : "#ecfdf5"}
+        />
+      </View>
       <Text style={{ color: primaryTextColor }} className="">
         Check out your call history
       </Text>
-      <Text
+      {/* <Text
         style={{ color: secondaryTextColor }}
         className="mt-3 text-sm font-medium"
       >
@@ -111,7 +190,7 @@ export default function LogsScreen() {
         <Text style={{ color: primaryTextColor }} className="font-semibold">
           {logs.length}
         </Text>
-      </Text>
+      </Text> */}
     </View>
   );
 
