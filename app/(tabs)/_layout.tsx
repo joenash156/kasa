@@ -139,7 +139,12 @@ export default function TabsLayout() {
         options={{
           title: "Logs",
           tabBarIcon: (props) => (
-            <TabIcon name="document-text" {...props} size={21} isDarkMode={isDarkMode} />
+            <TabIcon
+              name="document-text"
+              {...props}
+              size={21}
+              isDarkMode={isDarkMode}
+            />
           ),
         }}
       />
@@ -148,7 +153,12 @@ export default function TabsLayout() {
         options={{
           title: "Interests",
           tabBarIcon: (props) => (
-            <TabIcon name="heart" {...props} size={22} isDarkMode={isDarkMode} />
+            <TabIcon
+              name="heart"
+              {...props}
+              size={22}
+              isDarkMode={isDarkMode}
+            />
           ),
         }}
       />
@@ -157,7 +167,12 @@ export default function TabsLayout() {
         options={{
           title: "Profile",
           tabBarIcon: (props) => (
-            <TabIcon name="person" {...props} size={21} isDarkMode={isDarkMode} />
+            <TabIcon
+              name="person"
+              {...props}
+              size={21}
+              isDarkMode={isDarkMode}
+            />
           ),
         }}
       />

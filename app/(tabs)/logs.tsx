@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import LogCard, { CallLogItem } from "@/components/LogCard";
+import { ScrollGradientOverlay } from "@/components/ScrollGradientOverlay";
 import { useTheme } from "@/context/ThemeContext";
 import { getThemeColors } from "@/theme/colors";
 import { useRouter } from "expo-router";
@@ -102,7 +103,10 @@ export default function LogsScreen() {
       <Text style={{ color: primaryTextColor }} className="">
         Check out your call history
       </Text>
-      <Text style={{ color: secondaryTextColor }} className="mt-3 text-sm font-medium">
+      <Text
+        style={{ color: secondaryTextColor }}
+        className="mt-3 text-sm font-medium"
+      >
         Total calls recorded:{" "}
         <Text style={{ color: primaryTextColor }} className="font-semibold">
           {logs.length}
@@ -119,20 +123,23 @@ export default function LogsScreen() {
         onPressSettings={handleSettings}
       />
 
-      <FlatList
-        data={logs}
-        keyExtractor={(item) => item.id}
-        renderItem={renderLogItem}
-        ListHeaderComponent={listHeader}
-        className={`flex-1 ${colors.bg}`}
-        contentContainerStyle={{
-          paddingHorizontal: 12,
-          paddingTop: 18,
-          paddingBottom: 80,
-        }}
-        showsVerticalScrollIndicator={false}
-        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-      />
+      <View style={{ position: "relative", flex: 1 }}>
+        <FlatList
+          data={logs}
+          keyExtractor={(item) => item.id}
+          renderItem={renderLogItem}
+          ListHeaderComponent={listHeader}
+          className={`flex-1 ${colors.bg}`}
+          contentContainerStyle={{
+            paddingHorizontal: 12,
+            paddingTop: 18,
+            paddingBottom: 80,
+          }}
+          showsVerticalScrollIndicator={false}
+          ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+        />
+        <ScrollGradientOverlay height={80} />
+      </View>
     </View>
   );
 }

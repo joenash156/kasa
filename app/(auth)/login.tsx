@@ -20,6 +20,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import { getThemeColors } from "../../theme/colors";
+import { ScrollGradientOverlay } from "@/components/ScrollGradientOverlay";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -681,6 +682,7 @@ export default function LoginScreen() {
           </View>
         </View>
       </ScrollView>
+      <ScrollGradientOverlay height={80} />
     </KeyboardAvoidingView>
   );
 }

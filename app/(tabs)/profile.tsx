@@ -1,4 +1,5 @@
 import Header from "@/components/Header";
+import { ScrollGradientOverlay } from "@/components/ScrollGradientOverlay";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { getThemeColors } from "@/theme/colors";
@@ -139,186 +140,191 @@ export default function ProfileScreen() {
         onPressSettings={handleSettings}
       />
 
-      <ScrollView
-        className={`flex-1 ${colors.bg}`}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: 12,
-          paddingTop: 14,
-          paddingBottom: 88,
-        }}
-      >
-        <View
-          className="mb-5 rounded-2xl px-4 py-4"
-          style={{ backgroundColor: cardBg }}
+      <View style={{ position: "relative", flex: 1 }}>
+        <ScrollView
+          className={`flex-1 ${colors.bg}`}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 12,
+            paddingTop: 14,
+            paddingBottom: 88,
+          }}
         >
-          <Text style={{ color: primaryText }} className="">
-            Checkout your profile
-          </Text>
-          <Text
-            style={{ color: secondaryText }}
-            className="mt-1.5 text-sm leading-5"
+          <View
+            className="mb-5 rounded-2xl px-4 py-4"
+            style={{ backgroundColor: cardBg }}
           >
-            Help us personalize your experience by completing your profile.
-          </Text>
-        </View>
-
-        <View
-          className="mb-4 rounded-2xl px-4 py-4"
-          style={{ backgroundColor: cardBg }}
-        >
-          <Text style={{ color: primaryText }} className="text-base font-bold">
-            Account
-          </Text>
-
-          <View className="mt-4">
+            <Text style={{ color: primaryText }} className="">
+              Checkout your profile
+            </Text>
             <Text
               style={{ color: secondaryText }}
-              className="mb-1.5 text-xs font-semibold uppercase"
+              className="mt-1.5 text-sm leading-5"
             >
-              Phone Number
+              Help us personalize your experience by completing your profile.
             </Text>
-            <TextInput
-              value={formatContact(user?.phoneNumber || "")}
-              editable={false}
-              className="rounded-xl px-3 py-3"
-              style={{
-                backgroundColor: isDarkMode ? "#0B1220" : "#F3F4F6",
-                borderWidth: 1,
-                borderColor: inputBorder,
-                color: secondaryText,
-              }}
-            />
           </View>
 
-          <View className="mt-4">
+          <View
+            className="mb-4 rounded-2xl px-4 py-4"
+            style={{ backgroundColor: cardBg }}
+          >
             <Text
-              style={{ color: secondaryText }}
-              className="mb-1.5 text-xs font-semibold uppercase"
+              style={{ color: primaryText }}
+              className="text-base font-bold"
             >
-              Country Code
+              Account
             </Text>
-            <TextInput
-              value={`+233`}
-              editable={false}
-              className="rounded-xl px-3 py-3"
-              style={{
-                backgroundColor: isDarkMode ? "#0B1220" : "#F3F4F6",
-                borderWidth: 1,
-                borderColor: inputBorder,
-                color: secondaryText,
-              }}
-            />
+
+            <View className="mt-4">
+              <Text
+                style={{ color: secondaryText }}
+                className="mb-1.5 text-xs font-semibold uppercase"
+              >
+                Phone Number
+              </Text>
+              <TextInput
+                value={formatContact(user?.phoneNumber || "")}
+                editable={false}
+                className="rounded-xl px-3 py-3"
+                style={{
+                  backgroundColor: isDarkMode ? "#0B1220" : "#F3F4F6",
+                  borderWidth: 1,
+                  borderColor: inputBorder,
+                  color: secondaryText,
+                }}
+              />
+            </View>
+
+            <View className="mt-4">
+              <Text
+                style={{ color: secondaryText }}
+                className="mb-1.5 text-xs font-semibold uppercase"
+              >
+                Country Code
+              </Text>
+              <TextInput
+                value={`+233`}
+                editable={false}
+                className="rounded-xl px-3 py-3"
+                style={{
+                  backgroundColor: isDarkMode ? "#0B1220" : "#F3F4F6",
+                  borderWidth: 1,
+                  borderColor: inputBorder,
+                  color: secondaryText,
+                }}
+              />
+            </View>
           </View>
-        </View>
 
-        <View
-          className="rounded-2xl px-4 py-4"
-          style={{ backgroundColor: cardBg }}
-        >
-          <Text style={{ color: primaryText }} className="text-base font-bold">
-            Personal Information
-          </Text>
+          <View
+            className="rounded-2xl px-4 py-4"
+            style={{ backgroundColor: cardBg }}
+          >
+            <Text
+              style={{ color: primaryText }}
+              className="text-base font-bold"
+            >
+              Personal Information
+            </Text>
 
-          <View className="mt-4">
-            <SelectField
-              label="Age Group"
-              value={ageGroup}
-              options={["18–24", "25–34", "35–44", "45–54", "55+"]}
-              expanded={expandedSelect === "ageGroup"}
-              onToggle={() => toggleSelect("ageGroup")}
-              onSelect={(value) => {
-                setAgeGroup(value);
-                setExpandedSelect(null);
-              }}
-              isDarkMode={isDarkMode}
-            />
+            <View className="mt-4">
+              <SelectField
+                label="Age Group"
+                value={ageGroup}
+                options={["18–24", "25–34", "35–44", "45–54", "55+"]}
+                expanded={expandedSelect === "ageGroup"}
+                onToggle={() => toggleSelect("ageGroup")}
+                onSelect={(value) => {
+                  setAgeGroup(value);
+                  setExpandedSelect(null);
+                }}
+                isDarkMode={isDarkMode}
+              />
 
-            <SelectField
-              label="Gender"
-              value={gender}
-              options={["Male", "Female", "Prefer not to say"]}
-              expanded={expandedSelect === "gender"}
-              onToggle={() => toggleSelect("gender")}
-              onSelect={(value) => {
-                setGender(value);
-                setExpandedSelect(null);
-              }}
-              isDarkMode={isDarkMode}
-            />
+              <SelectField
+                label="Gender"
+                value={gender}
+                options={["Male", "Female", "Prefer not to say"]}
+                expanded={expandedSelect === "gender"}
+                onToggle={() => toggleSelect("gender")}
+                onSelect={(value) => {
+                  setGender(value);
+                  setExpandedSelect(null);
+                }}
+                isDarkMode={isDarkMode}
+              />
 
-            <SelectField
-              label="Region"
-              value={region}
-              options={[
-                "Greater Accra",
-                "Central",
-                "Western",
-                "Northern",
-                "Ashanti",
-                "Eastern",
-                "Volta",
-                "Ahafo",
-                "Bono",
-                "Bono East",
-                "Upper East",
-                "Upper West",
-                "Savannah",
-                "North East",
-                "Oti",
-                "Western North",
-              ]}
-              expanded={expandedSelect === "region"}
-              onToggle={() => toggleSelect("region")}
-              onSelect={(value) => {
-                setRegion(value);
-                setExpandedSelect(null);
-              }}
-              isDarkMode={isDarkMode}
-            />
+              <SelectField
+                label="Region"
+                value={region}
+                options={[
+                  "Greater Accra",
+                  "Central",
+                  "Western",
+                  "Northern",
+                  "Ashanti",
+                  "Eastern",
+                  "Volta",
+                  "Ahafo",
+                  "Bono",
+                  "Bono East",
+                  "Upper East",
+                  "Upper West",
+                  "Savannah",
+                  "North East",
+                  "Oti",
+                  "Western North",
+                ]}
+                expanded={expandedSelect === "region"}
+                onToggle={() => toggleSelect("region")}
+                onSelect={(value) => {
+                  setRegion(value);
+                  setExpandedSelect(null);
+                }}
+                isDarkMode={isDarkMode}
+              />
 
-            <SelectField
-              label="Language Preference"
-              value={language}
-              options={["Twi", "English", "Ga", "Ewe", "Hausa"]}
-              expanded={expandedSelect === "language"}
-              onToggle={() => toggleSelect("language")}
-              onSelect={(value) => {
-                setLanguage(value);
-                setExpandedSelect(null);
-              }}
-              isDarkMode={isDarkMode}
-            />
+              <SelectField
+                label="Language Preference"
+                value={language}
+                options={["Twi", "English", "Ga", "Ewe", "Hausa"]}
+                expanded={expandedSelect === "language"}
+                onToggle={() => toggleSelect("language")}
+                onSelect={(value) => {
+                  setLanguage(value);
+                  setExpandedSelect(null);
+                }}
+                isDarkMode={isDarkMode}
+              />
 
-            <SelectField
-              label="Phone Type"
-              value={phoneType}
-              options={[
-                "Select phone type",
-                "Smart Phone",
-                "Basic Phone",
-              ]}
-              expanded={expandedSelect === "phoneType"}
-              onToggle={() => toggleSelect("phoneType")}
-              onSelect={(value) => {
-                setPhoneType(value);
-                setExpandedSelect(null);
-              }}
-              isDarkMode={isDarkMode}
-            />
+              <SelectField
+                label="Phone Type"
+                value={phoneType}
+                options={["Select phone type", "Smart Phone", "Basic Phone"]}
+                expanded={expandedSelect === "phoneType"}
+                onToggle={() => toggleSelect("phoneType")}
+                onSelect={(value) => {
+                  setPhoneType(value);
+                  setExpandedSelect(null);
+                }}
+                isDarkMode={isDarkMode}
+              />
+            </View>
           </View>
-        </View>
 
-        <TouchableOpacity
-          className="mt-5 h-12 flex-row gap-2 items-center justify-center rounded-xl bg-orange-600"
-          activeOpacity={0.88}
-        >
-          <Ionicons name="save-outline" size={20} color="white" />
-          <Text className="text-base font-semibold text-white">
-            Save Profile
-          </Text>
-        </TouchableOpacity>
-      </ScrollView>
+          <TouchableOpacity
+            className="mt-5 h-12 flex-row gap-2 items-center justify-center rounded-xl bg-orange-600"
+            activeOpacity={0.88}
+          >
+            <Ionicons name="save-outline" size={20} color="white" />
+            <Text className="text-base font-semibold text-white">
+              Save Profile
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
+        <ScrollGradientOverlay height={80} />
+      </View>
     </View>
   );
 }

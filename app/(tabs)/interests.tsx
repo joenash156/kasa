@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import InterestCard, { InterestItem } from "@/components/InterestCard";
+import { ScrollGradientOverlay } from "@/components/ScrollGradientOverlay";
 import { useTheme } from "@/context/ThemeContext";
 import { getThemeColors } from "@/theme/colors";
 import { useRouter } from "expo-router";
@@ -87,6 +88,7 @@ export default function InterestsScreen() {
         )}
         showsVerticalScrollIndicator={false}
       />
+      <ScrollGradientOverlay height={80} />
     </View>
   );
 }
