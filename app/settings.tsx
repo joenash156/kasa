@@ -1,6 +1,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { getThemeColors } from "@/theme/colors";
+import { formatContact } from "@/utils/formatContact";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -96,11 +97,11 @@ export default function SettingsScreen() {
 
               <View className="flex-1">
                 <Text className={`text-sm font-semibold ${textColor}`}>
-                  {user ? "Logged In" : "Guest User"}
+                  {user ? "Active User" : "Guest"}
                 </Text>
                 <Text className={`text-xs mt-1 ${secondaryTextColor}`}>
                   {user
-                    ? `+233${user.phoneNumber}`
+                    ? `${formatContact(user.phoneNumber)}`
                     : "Sign in to save preferences"}
                 </Text>
               </View>

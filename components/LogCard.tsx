@@ -55,7 +55,7 @@ export default function LogCard({ log, index, isDarkMode }: LogCardProps) {
             </View>
 
             <View className="flex-1">
-              <Text style={{ color: primaryTextColor }} className="text-sm font-semibold">
+              <Text style={{ color: primaryTextColor }} className="font-semibold">
                 {log.contact}
               </Text>
 

@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { getThemeColors } from "@/theme/colors";
+import { formatContact } from "@/utils/formatContact";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -178,7 +179,7 @@ export default function ProfileScreen() {
               Phone Number
             </Text>
             <TextInput
-              value={`+233${user?.phoneNumber}`}
+              value={formatContact(user?.phoneNumber || "")}
               editable={false}
               className="rounded-xl px-3 py-3"
               style={{

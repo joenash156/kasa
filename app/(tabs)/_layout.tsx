@@ -2,19 +2,18 @@ import { useTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Animated, {
-  ZoomIn,
   interpolate,
+  //interpolateColor,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
 
-// Tab Icon Component with Animation
+// Tab Icon Component with smooth overlay animation
 const TabIcon = ({ name, focused, color, size, isDarkMode }: any) => {
-  const iconName = focused ? name : `${name}-outline`;
   const activeValue = useSharedValue(focused ? 1 : 0);
 
   React.useEffect(() => {
@@ -24,6 +23,7 @@ const TabIcon = ({ name, focused, color, size, isDarkMode }: any) => {
     });
   }, [focused, activeValue]);
 
+  // Background pill animation
   const animatedPillStyle = useAnimatedStyle(() => ({
     opacity: activeValue.value,
     transform: [
@@ -35,8 +35,19 @@ const TabIcon = ({ name, focused, color, size, isDarkMode }: any) => {
       : "rgba(255, 176, 111, 0.27)",
   }));
 
+  // Outline icon opacity (fades out when focused)
+  const outlineIconStyle = useAnimatedStyle(() => ({
+    opacity: 1 - activeValue.value,
+  }));
+
+  // Filled icon opacity (fades in when focused)
+  const filledIconStyle = useAnimatedStyle(() => ({
+    opacity: activeValue.value,
+  }));
+
   return (
-    <View className="items-center justify-center">
+    <View style={styles.container}>
+      {/* Background Pill */}
       <Animated.View
         style={[
           {
@@ -45,18 +56,36 @@ const TabIcon = ({ name, focused, color, size, isDarkMode }: any) => {
             height: size * 2,
             borderRadius: 70,
             top: -2,
-      
           },
           animatedPillStyle,
         ]}
       />
 
-      <Animated.View key={focused ? "active" : "inactive"} entering={ZoomIn.duration(200)}>
-        <Ionicons name={iconName} size={size} color={color} />
+      {/* Outline Icon (Visible when NOT focused) */}
+      <Animated.View
+        style={[StyleSheet.absoluteFill, styles.iconCentered, outlineIconStyle]}
+      >
+        <Ionicons name={`${name}-outline` as any} size={size} color={color} />
+      </Animated.View>
+
+      {/* Filled Icon (Fades in when focused) */}
+      <Animated.View style={[styles.iconCentered, filledIconStyle]}>
+        <Ionicons name={name} size={size} color={color} />
       </Animated.View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconCentered: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
 
 export default function TabsLayout() {
   const { theme } = useTheme();
