@@ -91,6 +91,7 @@ export default function LoginScreen() {
     type: "info",
   });
   const [pendingOtpNavigation, setPendingOtpNavigation] = useState(false);
+  const [pendingTabsNavigation, setPendingTabsNavigation] = useState(false);
   const heroScrollRef = useRef<ScrollView>(null);
 
   const phoneDigits = phoneNumber.replace(/\D/g, "");
@@ -135,6 +136,13 @@ export default function LoginScreen() {
       setPendingOtpNavigation(false);
     }
   }, [alertConfig.visible, pendingOtpNavigation]);
+
+  useEffect(() => {
+    if (!alertConfig.visible && pendingTabsNavigation) {
+      setPendingTabsNavigation(false);
+      router.replace("/(tabs)");
+    }
+  }, [alertConfig.visible, pendingTabsNavigation, router]);
 
   const onHeroMomentumEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const x = e.nativeEvent.contentOffset.x;
@@ -225,25 +233,38 @@ export default function LoginScreen() {
         otp: otpCode,
       });
 
-      // Check HTTP status code (200 = success) and ensure data exists
-      if (response && response.status === 200 && response.data) {
-        const { caller_id, token } = response.data;
+      // The API shape we receive is typically:
+      // { data: { caller_id, token }, status: 200, url: "/auth/verify-otp" }
+      // but tolerate alternative wrappers.
+      const top: any = response ?? null;
+      const data: any = top?.data ?? null;
+      const nested: any = data?.data ?? null;
+
+      const token: string | undefined = data?.token ?? nested?.token;
+      const callerId: number | undefined = data?.caller_id ?? nested?.caller_id;
+
+      if (top?.status === 200 && token && typeof callerId === "number") {
         try {
           // Use the login function from AuthContext
           await login(
             {
-              id: caller_id ?? 1,
+              id: callerId,
               phone_number: phoneNumber,
               country_code: "233",
               opt_in: false,
               interests: [],
               call_count: 0,
             },
-            caller_id,
+            callerId,
             token,
           );
-          // Navigate to the main app screen (tabs)
-          router.replace("/(tabs)");
+          setAlertConfig({
+            visible: true,
+            title: "Verified",
+            message: "OTP verified successfully. Welcome back!",
+            type: "success",
+          });
+          setPendingTabsNavigation(true);
         } catch (loginError) {
           console.error(
             "Login function failed after OTP verification:",
@@ -267,7 +288,8 @@ export default function LoginScreen() {
           visible: true,
           title: "Verification Failed",
           message:
-            response?.message || "Failed to verify OTP. Please try again.",
+            top?.message ||
+            "Failed to verify OTP. Please try again.",
           type: "error",
         });
       }

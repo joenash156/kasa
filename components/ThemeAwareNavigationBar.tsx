@@ -1,21 +1,37 @@
 import { useTheme } from "@/context/ThemeContext";
-import * as SystemUI from "expo-system-ui";
+import * as NavigationBar from "expo-navigation-bar";
 import { useEffect } from "react";
-import { Platform } from "react-native";
+import { AppState, Platform } from "react-native";
 
 export function ThemeAwareNavigationBar() {
   const { theme } = useTheme();
   const isDarkMode = theme === "dark";
 
   useEffect(() => {
-    // Only run on Android
-    if (Platform.OS !== "android") return;
+    const apply = async () => {
+      if (Platform.OS !== "android") return;
 
-    // Fire and forget - don't await, just update in background
-    const navBarColor = isDarkMode ? "#030712" : "#ffffff";
-    SystemUI.setBackgroundColorAsync(navBarColor).catch((error) => {
-      console.warn("Could not set navigation bar color:", error);
+      const navBarColor = isDarkMode ? "#030712" : "#ffffff";
+      const buttonStyle: NavigationBar.NavigationBarButtonStyle = isDarkMode
+        ? "light"
+        : "dark";
+
+      try {
+        await NavigationBar.setBackgroundColorAsync(navBarColor);
+        await NavigationBar.setButtonStyleAsync(buttonStyle);
+      } catch (error) {
+        console.warn("Could not set navigation bar:", error);
+      }
+    };
+
+    apply();
+
+    // Re-apply on resume (some devices revert it).
+    const sub = AppState.addEventListener("change", (state) => {
+      if (state === "active") apply();
     });
+
+    return () => sub.remove();
   }, [isDarkMode]);
 
   return null; // This component only handles side effects
