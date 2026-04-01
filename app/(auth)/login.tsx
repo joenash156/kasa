@@ -26,7 +26,7 @@ import { getThemeColors } from "../../theme/colors";
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { setUser } = useAuth();
+  const { login } = useAuth();
   const { height, width } = useWindowDimensions();
   const { theme } = useTheme();
   const isDarkMode = theme === "dark";
@@ -49,6 +49,7 @@ export default function LoginScreen() {
     message: "",
     type: "info",
   });
+  const [pendingOtpNavigation, setPendingOtpNavigation] = useState(false);
   const heroScrollRef = useRef<ScrollView>(null);
 
   const phoneDigits = phoneNumber.replace(/\D/g, "");
@@ -86,6 +87,14 @@ export default function LoginScreen() {
     return () => clearInterval(interval);
   }, [isManualScrolling, heroImages.length, width]);
 
+  // Handle navigation after alert dismissal
+  useEffect(() => {
+    if (!alertConfig.visible && pendingOtpNavigation) {
+      setStep("otp");
+      setPendingOtpNavigation(false);
+    }
+  }, [alertConfig.visible, pendingOtpNavigation]);
+
   const onHeroMomentumEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const x = e.nativeEvent.contentOffset.x;
     setCarouselIndex(
@@ -95,10 +104,7 @@ export default function LoginScreen() {
   };
 
   const handleAlertDismiss = () => {
-    // If it was a success alert for OTP request, move to OTP step
-    if (alertConfig.type === "success" && alertConfig.title === "Success") {
-      setStep("otp");
-    }
+    // Just close the alert - the useEffect will handle navigation
     setAlertConfig({ visible: false, title: "", message: "", type: "info" });
   };
 
@@ -122,9 +128,11 @@ export default function LoginScreen() {
       // Call API to request OTP
       const response = await authService.requestOtp(normalizedPhone);
 
-      // Check if response has data (indicating success - API returns data on 200 status)
-      if (response && response.data) {
-        // Show success alert, then move to OTP step when dismissed
+      // Check HTTP status code (200 = success, regardless of message content)
+      if (response && response.status === 200) {
+        // Set flag to navigate to OTP screen when alert is dismissed
+        setPendingOtpNavigation(true);
+        // Show success alert
         setAlertConfig({
           visible: true,
           title: "Success",
@@ -144,9 +152,7 @@ export default function LoginScreen() {
       setAlertConfig({
         visible: true,
         title: "Error",
-        message:
-          error.response?.data?.message ||
-          "Failed to send OTP. Please try again.",
+        message: error.message || "Failed to send OTP. Please try again.",
         type: "error",
       });
     } finally {
@@ -178,20 +184,26 @@ export default function LoginScreen() {
         otp: otpCode,
       });
 
-      // Check if response has data (indicating success)
-      if (response && response.data) {
-        // Set user in context with the response data
-        setUser({
-          id: response.data.caller_id ?? 1,
-          phone_number: phoneNumber,
-          country_code: "233",
-          opt_in: false,
-          interests: [],
-          call_count: 0,
-        });
+      // Check HTTP status code (200 = success)
+      if (response && response.status === 200 && response.data?.data) {
+        const { caller_id, token } = response.data.data;
 
-        // Navigate back to root - auth state will trigger redirect to tabs
-        router.replace("/");
+        // Use the login function from AuthContext
+        await login(
+          {
+            id: caller_id ?? 1,
+            phone_number: phoneNumber,
+            country_code: "233",
+            opt_in: false,
+            interests: [],
+            call_count: 0,
+          },
+          caller_id,
+          token,
+        );
+
+        // Navigate to the main app screen (tabs)
+        router.replace("/(tabs)");
       } else {
         setAlertConfig({
           visible: true,
@@ -230,8 +242,8 @@ export default function LoginScreen() {
       // Call API to resend OTP
       const response = await authService.requestOtp(normalizedPhone);
 
-      // Check if response has data (indicating success)
-      if (response && response.data) {
+      // Check HTTP status code (200 = success)
+      if (response && response.status === 200) {
         setOtpCode("");
         setAlertConfig({
           visible: true,
@@ -632,6 +644,8 @@ export default function LoginScreen() {
                       <View className="flex-1 flex-row items-center">
                         <TextInput
                           placeholder="••••••"
+                          autoComplete="sms-otp"
+                          textContentType="oneTimeCode"
                           placeholderTextColor={
                             theme === "dark" ? "#6B7280" : "#9CA3AF"
                           }

@@ -2,11 +2,11 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect } from "react";
 import { Pressable, Text } from "react-native";
 import Animated, {
+  interpolate,
   interpolateColor,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming,
 } from "react-native-reanimated";
 
 export type InterestItem = {
@@ -30,31 +30,31 @@ export default function InterestCard({
   isDarkMode,
   onToggle,
 }: InterestCardProps) {
-  const progress = useSharedValue(selected ? 1 : 0);
+  const selectedValue = useSharedValue(selected ? 1 : 0);
 
   useEffect(() => {
-    progress.value = withSpring(selected ? 1 : 0, {
+    selectedValue.value = withSpring(selected ? 1 : 0, {
       damping: 14,
       stiffness: 170,
     });
-  }, [selected, progress]);
+  }, [selected, selectedValue]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     backgroundColor: interpolateColor(
-      progress.value,
+      selectedValue.value,
       [0, 1],
       [isDarkMode ? "#111827" : "#fdfdfd", "rgba(251, 146, 60, 0.18)"],
     ),
     borderColor: interpolateColor(
-      progress.value,
+      selectedValue.value,
       [0, 1],
       [isDarkMode ? "#191f29" : "#f2f3f5", "#FB923C"],
     ),
-    transform: [{ scale: withTiming(selected ? 1 : 0.985, { duration: 100 }) }],
+    transform: [{ scale: interpolate(selectedValue.value, [0, 1], [0.985, 1]) }],
   }));
 
   const iconScaleStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: withTiming(selected ? 1.06 : 1, { duration: 100 }) }],
+    transform: [{ scale: interpolate(selectedValue.value, [0, 1], [1, 1.06]) }],
   }));
 
   const iconColor = selected ? "#EA580C" : isDarkMode ? "#9CA3AF" : "#6B7280";

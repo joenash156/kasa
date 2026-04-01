@@ -4,7 +4,7 @@ import {
   User,
   VerifyOtpPayload,
 } from "@/types/api.types";
-import apiClient from "./api";
+import { apiClient } from "./api";
 
 /**
  * Authentication Service
@@ -22,9 +22,7 @@ import apiClient from "./api";
  * // Convert to: "233551234567" (international)
  * const response = await authService.requestOtp("233551234567");
  */
-export async function requestOtp(
-  phoneNumber: string,
-): Promise<
+export async function requestOtp(phoneNumber: string): Promise<
   ApiResponse<{
     sessionId: string;
     expiresIn: number;
@@ -42,10 +40,16 @@ export async function requestOtp(
     const response = await apiClient.post("/auth/request-otp", {
       phone: normalizedPhone,
     });
-    return response.data;
-  } catch (error) {
+    return { ...response.data, status: response.status };
+  } catch (error: any) {
     console.error("[AuthService] Request OTP failed:", error);
-    throw error;
+    // Re-throw a consistent error structure
+    throw (
+      error.response?.data || {
+        message: "An unknown error occurred",
+        success: false,
+      }
+    );
   }
 }
 
@@ -82,10 +86,16 @@ export async function verifyOtp(
       await saveAuthToken(response.data.data.token);
     }
 
-    return response.data;
-  } catch (error) {
+    return { ...response.data, status: response.status };
+  } catch (error: any) {
     console.error("[AuthService] Verify OTP failed:", error);
-    throw error;
+    // Re-throw a consistent error structure
+    throw (
+      error.response?.data || {
+        message: "An unknown error occurred",
+        success: false,
+      }
+    );
   }
 }
 

@@ -16,7 +16,8 @@ class ApiClient {
   constructor() {
     // Initialize Axios instance
     this.axiosInstance = axios.create({
-      baseURL: process.env.EXPO_PUBLIC_API_URL || "https://kasa.dlp.africa/caller/api",
+      baseURL:
+        process.env.EXPO_PUBLIC_API_URL || "https://kasa.dlp.africa/caller/api",
       timeout: 10000, // 10 seconds
       headers: {
         "Content-Type": "application/json",
@@ -97,7 +98,6 @@ class ApiClient {
         // Handle different error scenarios
         switch (status) {
           case 401:
-            // Unauthorized - Token expired or invalid
             console.warn("[401] Unauthorized - Token expired or invalid");
             // Clear stored token for this session
             try {
@@ -190,5 +190,5 @@ class ApiClient {
 }
 
 // Create and export singleton instance
-export const apiClient = new ApiClient();
-export default apiClient.getClient();
+const apiClientInstance = new ApiClient();
+export const apiClient = apiClientInstance.getClient();

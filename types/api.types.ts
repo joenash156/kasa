@@ -3,11 +3,13 @@
  * All backend responses should follow this structure
  */
 export interface ApiResponse<T = any> {
-  success: boolean;
+  success?: boolean;
   data?: T;
   message?: string;
   error?: string;
   code?: string;
+  status?: number;
+  url?: string;
   timestamp?: string;
 }
 
@@ -50,7 +52,15 @@ export interface User {
   phone_number: string;
   country_code: string;
   opt_in: boolean;
-  age_group?: "under-18" | "18-24" | "25-34" | "35-44" | "45-54" | "55-64" | "65+" | null;
+  age_group?:
+    | "under-18"
+    | "18-24"
+    | "25-34"
+    | "35-44"
+    | "45-54"
+    | "55-64"
+    | "65+"
+    | null;
   gender?: "male" | "female" | "other" | "prefer-not-to-say" | null;
   region?: string | null;
   language_preference?: string | null;
@@ -65,6 +75,7 @@ export interface User {
 export interface AuthResponse {
   token: string;
   caller_id: number;
+  data: any;
 }
 
 // Request payload for POST /auth/verify-otp

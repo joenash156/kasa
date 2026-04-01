@@ -95,7 +95,7 @@ export default function CallForm({
             contentContainerStyle={{ flexGrow: 1, paddingBottom: 60 }}
           >
             <View className="flex-1">
-              {/* Hero Section with Mascot */}
+              {/* Hero Section */}
               <View style={{ height: heroHeight }} className="px-2 py-8">
                 <ImageBackground
                   source={require("../assets/images/person1.png")}

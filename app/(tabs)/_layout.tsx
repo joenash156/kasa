@@ -10,26 +10,26 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming,
 } from "react-native-reanimated";
 
 // Tab Icon Component with smooth overlay animation
 const TabIcon = ({ name, focused, color, size, isDarkMode }: any) => {
-  const activeValue = useSharedValue(focused ? 1 : 0);
+  const focusedValue = useSharedValue(focused ? 1 : 0);
 
-  React.useEffect(() => {
-    activeValue.value = withSpring(focused ? 1 : 0, {
+  // Update focused value without triggering render reads
+  useEffect(() => {
+    focusedValue.value = withSpring(focused ? 1 : 0, {
       damping: 15,
       stiffness: 150,
     });
-  }, [focused, activeValue]);
+  }, [focused, focusedValue]);
 
   // Background pill animation
   const animatedPillStyle = useAnimatedStyle(() => ({
-    opacity: activeValue.value,
+    opacity: focusedValue.value,
     transform: [
-      { scale: withTiming(focused ? 1 : 0.84, { duration: 180 }) },
-      { translateY: interpolate(activeValue.value, [0, 1], [1, 0]) },
+      { scale: interpolate(focusedValue.value, [0, 1], [0.84, 1]) },
+      { translateY: interpolate(focusedValue.value, [0, 1], [1, 0]) },
     ],
     backgroundColor: isDarkMode
       ? "rgba(255, 160, 82, 0.2)"
@@ -38,12 +38,12 @@ const TabIcon = ({ name, focused, color, size, isDarkMode }: any) => {
 
   // Outline icon opacity (fades out when focused)
   const outlineIconStyle = useAnimatedStyle(() => ({
-    opacity: 1 - activeValue.value,
+    opacity: 1 - focusedValue.value,
   }));
 
   // Filled icon opacity (fades in when focused)
   const filledIconStyle = useAnimatedStyle(() => ({
-    opacity: activeValue.value,
+    opacity: focusedValue.value,
   }));
 
   return (

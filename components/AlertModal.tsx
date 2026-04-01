@@ -1,4 +1,5 @@
 import { useTheme } from "@/context/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import React from "react";
 import { Modal, Platform, Text, TouchableOpacity, View } from "react-native";
@@ -31,12 +32,15 @@ export default function AlertModal({
   const textPrimary = isDarkMode ? "#F9FAFB" : "#111827";
   const textSecondary = isDarkMode ? "#D1D5DB" : "#4B5563";
 
-  // Determine alert color based on type
+  // Determine alert color and icon based on type
   let alertColor = "#3B82F6";
+  let iconName: keyof typeof Ionicons.glyphMap = "information-circle";
   if (type === "success") {
     alertColor = "#10B981";
+    iconName = "checkmark-circle";
   } else if (type === "error") {
     alertColor = "#EF4444";
+    iconName = "alert-circle";
   }
 
   const handleDismiss = () => {
@@ -62,11 +66,10 @@ export default function AlertModal({
             className="rounded-xl px-6 py-8 mx-3 max-w-[320px] w-full shadow-lg dark:shadow-black/40"
             style={{ backgroundColor: bgColor }}
           >
-            {/* Alert Indicator */}
-            <View
-              className="w-1 h-10 rounded mb-4"
-              style={{ backgroundColor: alertColor }}
-            />
+            {/* Alert Icon */}
+            <View className="mb-4 items-center">
+              <Ionicons name={iconName} size={48} color={alertColor} />
+            </View>
 
             {/* Title */}
             <Text
