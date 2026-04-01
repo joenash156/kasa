@@ -8,11 +8,12 @@ import { apiClient } from "./api";
 
 /**
  * Get authenticated user's profile
+ * Uses GET /profile endpoint
  * @returns Promise with user profile data
  */
 export async function getUserProfile(): Promise<ApiResponse<User>> {
   try {
-    const response = await apiClient.get("/users/me");
+    const response = await apiClient.get("/profile");
     return response.data;
   } catch (error) {
     console.error("[UserService] Get profile failed:", error);
@@ -22,6 +23,7 @@ export async function getUserProfile(): Promise<ApiResponse<User>> {
 
 /**
  * Update user profile
+ * Uses PUT /profile endpoint
  * @param userData - Partial user data to update
  * @returns Promise with updated user profile
  */
@@ -29,7 +31,7 @@ export async function updateUserProfile(
   userData: Partial<User>,
 ): Promise<ApiResponse<User>> {
   try {
-    const response = await apiClient.patch("/users/me", userData);
+    const response = await apiClient.put("/profile", userData);
     return response.data;
   } catch (error) {
     console.error("[UserService] Update profile failed:", error);
@@ -38,46 +40,49 @@ export async function updateUserProfile(
 }
 
 /**
- * Get user preferences
- * @returns Promise with user preferences (theme, language, notifications, etc.)
+ * Update user interests
+ * Uses PUT /profile endpoint with interests field
+ * @param interests - Array of user interests
+ * @returns Promise with updated user profile
  */
-export async function getUserPreferences(): Promise<
-  ApiResponse<{
-    theme: "light" | "dark";
-    language: string;
-    notifications: boolean;
-  }>
-> {
+export async function updateUserInterests(
+  interests: string[],
+): Promise<ApiResponse<User>> {
   try {
-    const response = await apiClient.get("/users/preferences");
+    const response = await apiClient.put("/profile", { interests });
     return response.data;
   } catch (error) {
-    console.error("[UserService] Get preferences failed:", error);
+    console.error("[UserService] Update interests failed:", error);
     throw error;
   }
 }
 
 /**
- * Update user preferences
- * @param preferences - User preferences to update
- * @returns Promise with updated preferences
+ * Get user call statistics
+ * Returns call count, first call date, and last call date
+ * @returns Promise with user call statistics
  */
-export async function updateUserPreferences(preferences: {
-  theme?: "light" | "dark";
-  language?: string;
-  notifications?: boolean;
-}): Promise<
+export async function getUserCallStats(): Promise<
   ApiResponse<{
-    theme: "light" | "dark";
-    language: string;
-    notifications: boolean;
+    call_count: number;
+    first_call_at: string | null;
+    last_call_at: string | null;
   }>
 > {
   try {
-    const response = await apiClient.patch("/users/preferences", preferences);
-    return response.data;
+    const response = await apiClient.get("/profile");
+    // Extract only the call statistics from the profile
+    const profile = response.data.data || response.data;
+    return {
+      success: true,
+      data: {
+        call_count: profile?.call_count || 0,
+        first_call_at: profile?.first_call_at || null,
+        last_call_at: profile?.last_call_at || null,
+      },
+    };
   } catch (error) {
-    console.error("[UserService] Update preferences failed:", error);
+    console.error("[UserService] Get call stats failed:", error);
     throw error;
   }
 }
@@ -123,11 +128,11 @@ export async function changePassword(
   }
 }
 
-export default {
+const userService = {
   getUserProfile,
   updateUserProfile,
-  getUserPreferences,
-  updateUserPreferences,
-  deleteUserAccount,
-  changePassword,
+  updateUserInterests,
+  getUserCallStats,
 };
+
+export default userService;

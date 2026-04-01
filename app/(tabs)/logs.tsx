@@ -1,111 +1,146 @@
+import AlertModal, { AlertConfig } from "@/components/AlertModal";
 import Header from "@/components/Header";
 import LogCard, { CallLogItem } from "@/components/LogCard";
 import { ScrollGradientOverlay } from "@/components/ScrollGradientOverlay";
+import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
+import { getCallLogs } from "@/services/call.service";
 import { getThemeColors } from "@/theme/colors";
+import { CallLog, CallsListResponse } from "@/types/api.types";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from "react";
-import { FlatList, ListRenderItem, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  ListRenderItem,
+  RefreshControl,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+// Helper to format API call data to LogCard format
+const transformCallLog = (apiLog: CallLog): CallLogItem => {
+  // Format timestamp to readable date
+  const date = new Date(apiLog.timestamp);
+  const formattedDate = date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  // Format duration from seconds to mm:ss
+  const totalSeconds = apiLog.duration_played || 0;
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  const formattedDuration = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+
+  // Determine type and status
+  const type = apiLog.is_survey ? "Survey" : apiLog.call_type || "Ad";
+  const status = apiLog.call_duration > 0 ? "completed" : "missed";
+
+  return {
+    id: String(apiLog.id),
+    contact: "Call", // API doesn't return destination, show generic
+    duration: formattedDuration,
+    date: formattedDate,
+    campaign: apiLog.is_survey ? "Survey Call" : "Kasa Free Call",
+    type: type as "Ad" | "Survey",
+    status,
+    rawDuration: apiLog.duration_played, // Keep raw seconds for stats calculation
+  };
+};
 
 export default function LogsScreen() {
   const router = useRouter();
   const { theme } = useTheme();
+  const { user } = useAuth();
   const isDarkMode = theme === "dark";
   const colors = getThemeColors(isDarkMode);
   const primaryTextColor = isDarkMode ? "#F9FAFB" : "#111827";
   const secondaryTextColor = isDarkMode ? "#9CA3AF" : "#6B7280";
 
+  // State for call logs
+  const [logs, setLogs] = useState<CallLogItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState({
+    total: 0,
+    page: 1,
+    pages: 1,
+  });
+
+  // Alert modal state
+  const [alertConfig, setAlertConfig] = useState<AlertConfig>({
+    visible: false,
+    title: "",
+    message: "",
+    type: "info",
+  });
+
+  // Fetch call logs on mount
+  useEffect(() => {
+    fetchCallLogs();
+  }, []);
+
+  const fetchCallLogs = async (page = 1, isRefresh = false) => {
+    try {
+      if (!isRefresh) {
+        setLoading(true);
+      }
+      setError(null);
+
+      const response = await getCallLogs(page, 20);
+      const data = (response.data || response) as CallsListResponse;
+
+      if (data && data.calls) {
+        const transformedLogs = data.calls.map(transformCallLog);
+        setLogs(transformedLogs);
+        setPagination({
+          total: data.total || 0,
+          page: data.page || 1,
+          pages: data.pages || 1,
+        });
+      }
+    } catch (err: any) {
+      console.error("[LogsScreen] Failed to fetch call logs:", err);
+      setError(err.message || "Failed to load call logs");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchCallLogs(1, true);
+  };
+
+  const handleAlertDismiss = () => {
+    setAlertConfig({ visible: false, title: "", message: "", type: "info" });
+  };
+
   const handleSettings = () => {
     router.push("/settings");
   };
-
-  const logs: CallLogItem[] = [
-    {
-      id: "1",
-      contact: "+233 24 123 4567",
-      duration: "03:18",
-      date: "March 27, 2025, 09:41 AM",
-      campaign: "Kasa Free Call",
-      type: "Ad",
-      status: "completed",
-    },
-    {
-      id: "2",
-      contact: "+233 55 987 1234",
-      duration: "00:42",
-      date: "March 27, 2025, 07:02 AM",
-      campaign: "Survey Call",
-      type: "Survey",
-      status: "missed",
-    },
-    {
-      id: "3",
-      contact: "+233 20 100 2000",
-      duration: "12:09",
-      date: "March 26, 2025, 08:14 PM",
-      campaign: "Kasa Free Call",
-      type: "Ad",
-      status: "completed",
-    },
-    {
-      id: "4",
-      contact: "+233 30 555 8899",
-      duration: "05:42",
-      date: "March 26, 2025, 03:30 PM",
-      campaign: "Survey Call",
-      type: "Survey",
-      status: "completed",
-    },
-    {
-      id: "5",
-      contact: "+233 50 222 3344",
-      duration: "01:15",
-      date: "March 25, 2025, 10:22 AM",
-      campaign: "Kasa Free Call",
-      type: "Ad",
-      status: "missed",
-    },
-    {
-      id: "6",
-      contact: "+233 24 999 5555",
-      duration: "08:33",
-      date: "March 25, 2025, 09:05 AM",
-      campaign: "Survey Call",
-      type: "Survey",
-      status: "completed",
-    },
-    {
-      id: "7",
-      contact: "+233 40 444 1111",
-      duration: "02:47",
-      date: "March 24, 2025, 06:18 PM",
-      campaign: "Kasa Free Call",
-      type: "Ad",
-      status: "completed",
-    },
-    {
-      id: "8",
-      contact: "+233 55 666 7777",
-      duration: "00:28",
-      date: "March 24, 2025, 02:45 PM",
-      campaign: "Survey Call",
-      type: "Survey",
-      status: "missed",
-    },
-  ];
 
   const renderLogItem: ListRenderItem<CallLogItem> = ({ item, index }) => (
     <LogCard log={item} index={index} isDarkMode={isDarkMode} />
   );
 
-  // Calculate stats
-  const totalCalls = logs.length;
+  // Calculate stats from logs
+  const totalCalls = pagination.total || logs.length;
   const lastCallDate = logs.length > 0 ? logs[0].date : "-";
-  // Sum durations in minutes (e.g. "03:18" -> 3.3)
-  const freeMinutes = logs.reduce((sum, log) => {
-    const [min, sec] = log.duration.split(":").map(Number);
-    return sum + min + sec / 60;
+  
+  // Sum duration_played in minutes - calculate from raw API data
+  const totalMinutes = logs.reduce((sum: number, log: CallLogItem & { rawDuration?: number }) => {
+    // Use raw duration in seconds if available, otherwise parse from formatted string
+    const seconds = log.rawDuration || 0;
+    return sum + seconds / 60;
   }, 0);
 
   const StatCard = ({
@@ -172,27 +207,63 @@ export default function LogsScreen() {
           bg={isDarkMode ? "#172554" : "#eff6ff"}
         />
         <StatCard
-          icon="gift"
-          label="Free Minutes Earned"
-          value={`${freeMinutes.toFixed(1)} min`}
+          icon="time"
+          label="Total Minutes"
+          value={`${totalMinutes.toFixed(1)} min`}
           color={isDarkMode ? "#10B981" : "#059669"}
           bg={isDarkMode ? "#052e16" : "#ecfdf5"}
         />
       </View>
-      <Text style={{ color: primaryTextColor }} className="">
-        Check out your call history
+      <Text style={{ color: primaryTextColor }} className="text-base font-semibold">
+        Your Call History
       </Text>
-      {/* <Text
-        style={{ color: secondaryTextColor }}
-        className="mt-3 text-sm font-medium"
-      >
-        Total calls recorded:{" "}
-        <Text style={{ color: primaryTextColor }} className="font-semibold">
-          {logs.length}
-        </Text>
-      </Text> */}
+      <Text style={{ color: secondaryTextColor }} className="mt-1 text-sm">
+        Showing {logs.length} of {totalCalls} calls
+      </Text>
     </View>
   );
+
+  if (loading && !refreshing) {
+    return (
+      <View className={`flex-1 ${colors.bg}`}>
+        <Header
+          title="Call Logs"
+          showLogo={false}
+          onPressSettings={handleSettings}
+        />
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#FB923C" />
+          <Text className={`mt-4 ${colors.textSecondary}`}>
+            Loading call logs...
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  if (error && !refreshing) {
+    return (
+      <View className={`flex-1 ${colors.bg}`}>
+        <Header
+          title="Call Logs"
+          showLogo={false}
+          onPressSettings={handleSettings}
+        />
+        <View className="flex-1 items-center justify-center px-6">
+          <Ionicons name="alert-circle-outline" size={48} color="#EF4444" />
+          <Text className={`mt-4 text-center ${colors.text}`}>
+            {error}
+          </Text>
+          <TouchableOpacity
+            onPress={() => fetchCallLogs()}
+            className="mt-6 rounded-xl bg-orange-600 px-6 py-3"
+          >
+            <Text className="font-semibold text-white">Retry</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View className={`flex-1 ${colors.bg}`}>
@@ -216,9 +287,34 @@ export default function LogsScreen() {
           }}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor="#FB923C"
+              colors={["#FB923C"]}
+            />
+          }
+          ListEmptyComponent={
+            <View className="items-center justify-center py-12">
+              <Ionicons name="call-outline" size={48} color={secondaryTextColor} />
+              <Text style={{ color: secondaryTextColor }} className="mt-4 text-center">
+                No call logs yet.\nMake your first call to see it here!
+              </Text>
+            </View>
+          }
         />
         <ScrollGradientOverlay height={80} />
       </View>
+
+      {/* Alert Modal */}
+      <AlertModal
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        onDismiss={handleAlertDismiss}
+      />
     </View>
   );
 }

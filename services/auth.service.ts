@@ -94,8 +94,13 @@ export async function verifyOtp(
     });
 
     // Save token to secure storage for future requests
-    if (response.data.data?.token) {
-      await saveAuthToken(response.data.data.token);
+    // API returns: { token, caller_id, status } directly or wrapped in data
+    const responseData = response.data?.data || response.data;
+    if (responseData?.token) {
+      await saveAuthToken(responseData.token);
+      console.log("[AuthService] Token saved successfully");
+    } else {
+      console.warn("[AuthService] No token found in response:", response.data);
     }
 
     return { ...response.data, status: response.status };
@@ -191,9 +196,7 @@ export async function clearAuthTokens(): Promise<void> {
     
     // Also clear from API client headers if available
     try {
-      if (apiClient.defaults && apiClient.defaults.headers && apiClient.defaults.headers.common) {
-        apiClient.defaults.headers.common["Authorization"] = "";
-      }
+      apiClient.clearAuthorizationHeader();
     } catch (headerError) {
       // Ignore header clearing errors - token is already deleted from secure storage
       console.log("[AuthService] Note: Could not clear API headers, but token was deleted");

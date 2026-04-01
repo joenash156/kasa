@@ -2,11 +2,11 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect } from "react";
 import { Pressable, Text } from "react-native";
 import Animated, {
-  interpolate,
-  interpolateColor,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
+    interpolate,
+    interpolateColor,
+    useAnimatedStyle,
+    useSharedValue,
+    withSpring,
 } from "react-native-reanimated";
 
 export type InterestItem = {
@@ -19,7 +19,7 @@ type InterestCardProps = {
   item: InterestItem;
   selected: boolean;
   isDarkMode: boolean;
-  onToggle: (id: string) => void;
+  onToggle: (id: string) => void | Promise<void>;
 };
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);

@@ -1,8 +1,10 @@
 import { useTheme } from "@/context/ThemeContext";
 import { getThemeColors } from "@/theme/colors";
+import AlertModal, { AlertConfig } from "@/components/AlertModal";
 import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Link } from "expo-router";
+import * as callService from "@/services/call.service";
 import React, { useState } from "react";
 import {
   Dimensions,
@@ -39,6 +41,13 @@ export default function CallForm({
   const { theme } = useTheme();
   const [yourNumber, setYourNumber] = useState(initialYourNumber);
   const [friendNumber, setFriendNumber] = useState("");
+  const [isDialing, setIsDialing] = useState(false);
+  const [alertConfig, setAlertConfig] = useState<AlertConfig>({
+    visible: false,
+    title: "",
+    message: "",
+    type: "info",
+  });
 
   const isDarkMode = theme === "dark";
   const colors = getThemeColors(isDarkMode);
@@ -63,9 +72,59 @@ export default function CallForm({
   const { height } = Dimensions.get("window");
   const heroHeight = height * 0.45;
 
+  const handleAlertDismiss = () => {
+    setAlertConfig({ visible: false, title: "", message: "", type: "info" });
+  };
+
+  const handleDial = async () => {
+    if (!canCall || isDialing) return;
+
+    if (!isLoggedIn) {
+      setAlertConfig({
+        visible: true,
+        title: "Login required",
+        message:
+          "To place a call, please login so we can call you back and connect you to your destination number.",
+        type: "info",
+      });
+      return;
+    }
+
+    setIsDialing(true);
+    try {
+      const response = await callService.dial(friendNumber);
+      const success = Boolean(response?.data?.success);
+      const message =
+        response?.data?.message ||
+        response?.message ||
+        (success ? "Callback initiated successfully." : "Could not initiate call.");
+
+      setAlertConfig({
+        visible: true,
+        title: success ? "Calling…" : "Call not started",
+        message,
+        type: success ? "success" : "error",
+      });
+    } catch (err: any) {
+      setAlertConfig({
+        visible: true,
+        title: "Call failed",
+        message:
+          err?.response?.data?.error ||
+          err?.response?.data?.message ||
+          err?.message ||
+          "Unable to initiate the call. Please try again.",
+        type: "error",
+      });
+    } finally {
+      setIsDialing(false);
+    }
+  };
+
   return (
     <>
       {showHeader && headerComponent}
+      <AlertModal {...alertConfig} onDismiss={handleAlertDismiss} />
       <View className={`flex-1 ${bgColor}`} style={{ position: "relative" }}>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -242,8 +301,9 @@ export default function CallForm({
                   className={`px-1 py-4  ${isDarkMode ? "bg-gray-950" : "bg-gray-50"}`}
                 >
                   <TouchableOpacity
-                    disabled={!canCall}
+                    disabled={!canCall || isDialing}
                     activeOpacity={0.8}
+                    onPress={handleDial}
                     className={`w-full flex-row items-center justify-center gap-2 rounded-xl py-3 ${
                       canCall
                         ? "bg-orange-600"
@@ -262,7 +322,7 @@ export default function CallForm({
                           : `${isDarkMode ? "text-gray-400" : "text-gray-500"}`
                       }`}
                     >
-                      Start Free Call
+                      {isDialing ? "Starting…" : "Start Free Call"}
                     </Text>
                   </TouchableOpacity>
 

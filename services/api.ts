@@ -1,10 +1,10 @@
 import { ApiResponse } from "@/types/api.types";
 import axios, {
-    AxiosError,
-    AxiosInstance,
-    AxiosRequestConfig,
-    AxiosResponse,
-    InternalAxiosRequestConfig,
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
 } from "axios";
 
 /**
@@ -36,9 +36,29 @@ class ApiClient {
   }
 
   /**
+   * Clear authorization header immediately (best-effort).
+   * This prevents stale tokens from being sent after logout.
+   */
+  public clearAuthorizationHeader(): void {
+    try {
+      if (this.axiosInstance.defaults?.headers?.common) {
+        delete this.axiosInstance.defaults.headers.common.Authorization;
+      }
+      if (this.defaults?.headers?.common) {
+        delete this.defaults.headers.common.Authorization;
+      }
+    } catch {
+      // Best-effort only; don't crash logout flows.
+    }
+  }
+
+  /**
    * Request Interceptor: Add authorization token and customize headers
    */
   private setupRequestInterceptor(): void {
+    // List of endpoints that don't require authentication
+    const publicEndpoints = ["/dial"];
+
     this.axiosInstance.interceptors.request.use(
       async (config: InternalAxiosRequestConfig) => {
         // Add API Key header (required by Kasa API)
@@ -47,17 +67,27 @@ class ApiClient {
           config.headers["X-API-Key"] = apiKey;
         }
 
+        // Check if this is a public endpoint
+        const isPublicEndpoint = publicEndpoints.some(
+          endpoint => config.url?.includes(endpoint)
+        );
+
         // Add Bearer token if available (retrieved from secure storage)
-        // Using dynamic require to avoid circular dependency with auth.service
-        try {
-          const authService = await import("./auth.service");
-          const token = await authService.default.getAuthToken();
-          if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        // Skip authorization for public endpoints
+        if (!isPublicEndpoint) {
+          try {
+            const authService = await import("./auth.service");
+            const token = await authService.default.getAuthToken();
+            if (token) {
+              config.headers.Authorization = `Bearer ${token}`;
+              console.log("[API] Token attached to request");
+            } else {
+              console.warn("[API] No auth token found in storage");
+            }
+          } catch (error) {
+            // Token retrieval failed, continue without token
+            console.warn("[API] Could not retrieve auth token:", error);
           }
-        } catch (error) {
-          // Token retrieval failed, continue without token
-          console.warn("[API] Could not retrieve auth token:", error);
         }
 
         if (__DEV__) {

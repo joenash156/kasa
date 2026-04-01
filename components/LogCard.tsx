@@ -11,6 +11,7 @@ export type CallLogItem = {
   campaign: string;
   type: "Ad" | "Survey";
   status: "completed" | "missed";
+  rawDuration?: number; // Duration in seconds from API (for stats calculation)
 };
 
 type LogCardProps = {
