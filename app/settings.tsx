@@ -1,5 +1,4 @@
-import AlertModal from "@/components/AlertModal";
-
+import AlertModal, { AlertConfig } from "@/components/AlertModal";
 import { ScrollGradientOverlay } from "@/components/ScrollGradientOverlay";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
@@ -394,7 +393,7 @@ export default function SettingsScreen() {
         </ScrollView>
         <ScrollGradientOverlay height={80} />
       </View>
-
+      
       {/* Alert Modal */}
       <AlertModal
         visible={alertConfig.visible}
