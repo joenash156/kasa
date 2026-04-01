@@ -1,9 +1,10 @@
 import {
-  ApiResponse,
-  AuthResponse,
-  User,
-  VerifyOtpPayload,
+    ApiResponse,
+    AuthResponse,
+    User,
+    VerifyOtpPayload,
 } from "@/types/api.types";
+import * as SecureStore from "expo-secure-store";
 import { apiClient } from "./api";
 
 /**
@@ -145,11 +146,11 @@ export async function validateSession(): Promise<ApiResponse<User>> {
  */
 export async function saveAuthToken(token: string): Promise<void> {
   try {
-    // import * as SecureStore from "expo-secure-store";
-    // await SecureStore.setItemAsync("authToken", token);
-    console.log("[AuthService] Token saved (implement with expo-secure-store)");
+    await SecureStore.setItemAsync("authToken", token);
+    console.log("[AuthService] Token saved successfully");
   } catch (error) {
     console.error("[AuthService] Failed to save token:", error);
+    throw error;
   }
 }
 
@@ -159,12 +160,9 @@ export async function saveAuthToken(token: string): Promise<void> {
  */
 export async function getAuthToken(): Promise<string | null> {
   try {
-    // import * as SecureStore from "expo-secure-store";
-    // return await SecureStore.getItemAsync("authToken");
-    console.log(
-      "[AuthService] Token retrieved (implement with expo-secure-store)",
-    );
-    return null;
+    const token = await SecureStore.getItemAsync("authToken");
+    console.log("[AuthService] Token retrieved successfully");
+    return token;
   } catch (error) {
     console.error("[AuthService] Failed to retrieve token:", error);
     return null;
@@ -177,11 +175,10 @@ export async function getAuthToken(): Promise<string | null> {
  */
 export async function clearAuthTokens(): Promise<void> {
   try {
-    // import * as SecureStore from "expo-secure-store";
-    // await SecureStore.deleteItemAsync("authToken");
+    await SecureStore.deleteItemAsync("authToken");
     // Also clear from API client headers
     apiClient.defaults.headers.common["Authorization"] = "";
-    console.log("[AuthService] Tokens cleared");
+    console.log("[AuthService] Tokens cleared successfully");
   } catch (error) {
     console.error("[AuthService] Failed to clear tokens:", error);
   }

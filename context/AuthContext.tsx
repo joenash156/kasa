@@ -2,11 +2,11 @@ import * as authService from "@/services/auth.service";
 import { User } from "@/types/api.types";
 import { useRouter } from "expo-router";
 import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useState,
 } from "react";
 
 interface AuthContextType {
@@ -50,9 +50,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (userData: User, id: number, token: string) => {
       try {
         setIsLoading(true);
+        console.log("[AuthContext] Login called with:", {
+          userId: userData.id,
+          callerId: id,
+          hasToken: !!token
+        });
+        
         // Token is already saved in verifyOtp, just set context
         setUser(userData);
         setCallerId(id);
+        
+        console.log("[AuthContext] Login successful, user context updated");
       } finally {
         setIsLoading(false);
       }

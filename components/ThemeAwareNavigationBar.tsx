@@ -17,6 +17,8 @@ export function ThemeAwareNavigationBar() {
         : "dark";
 
       try {
+        // Required when edge-to-edge is disabled; also helps avoid OEM overrides.
+        await NavigationBar.setPositionAsync("relative");
         await NavigationBar.setBackgroundColorAsync(navBarColor);
         await NavigationBar.setButtonStyleAsync(buttonStyle);
       } catch (error) {

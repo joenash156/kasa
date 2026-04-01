@@ -6,25 +6,25 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-  ActivityIndicator,
-  Image,
-  KeyboardAvoidingView,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
+    ActivityIndicator,
+    Image,
+    KeyboardAvoidingView,
+    NativeScrollEvent,
+    NativeSyntheticEvent,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    useWindowDimensions,
+    View,
 } from "react-native";
 import Animated, {
-  interpolateColor,
-  useAnimatedStyle,
-  useDerivedValue,
-  withTiming,
+    interpolateColor,
+    useAnimatedStyle,
+    useDerivedValue,
+    withTiming,
 } from "react-native-reanimated";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
@@ -233,17 +233,25 @@ export default function LoginScreen() {
         otp: otpCode,
       });
 
-      // The API shape we receive is typically:
-      // { data: { caller_id, token }, status: 200, url: "/auth/verify-otp" }
-      // but tolerate alternative wrappers.
+      console.log("[Login] OTP Verification Response:", response);
+
+      // The API response structure is: { caller_id, status, token }
+      // not wrapped in a data object
       const top: any = response ?? null;
-      const data: any = top?.data ?? null;
-      const nested: any = data?.data ?? null;
+      const data: any = top?.data ?? top; // fallback to top if no data wrapper
+      
+      const token: string | undefined = data?.token ?? top?.token;
+      const callerIdRaw: unknown = data?.caller_id ?? top?.caller_id;
+      const callerId = typeof callerIdRaw === "number" ? callerIdRaw : Number(callerIdRaw);
 
-      const token: string | undefined = data?.token ?? nested?.token;
-      const callerId: number | undefined = data?.caller_id ?? nested?.caller_id;
+      console.log("[Login] Parsed response:", {
+        status: top?.status,
+        token: token ? "exists" : "missing",
+        callerId,
+        hasValidCallerId: Number.isFinite(callerId)
+      });
 
-      if (top?.status === 200 && token && typeof callerId === "number") {
+      if (top?.status === 200 && token && Number.isFinite(callerId)) {
         try {
           // Use the login function from AuthContext
           await login(
@@ -284,6 +292,14 @@ export default function LoginScreen() {
           });
         }
       } else {
+        console.log("[Login] Verification failed:", {
+          status: top?.status,
+          token: token ? "exists" : "missing",
+          callerId,
+          hasValidCallerId: Number.isFinite(callerId),
+          fullResponse: top
+        });
+        
         setAlertConfig({
           visible: true,
           title: "Verification Failed",
