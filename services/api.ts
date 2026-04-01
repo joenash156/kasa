@@ -1,4 +1,4 @@
-import { ApiError, ApiResponse } from "@/types/api.types";
+import { ApiResponse } from "@/types/api.types";
 import axios, {
   AxiosError,
   AxiosInstance,
@@ -12,6 +12,7 @@ import axios, {
  */
 class ApiClient {
   private axiosInstance: AxiosInstance;
+  defaults: any;
 
   constructor() {
     // Initialize Axios instance
@@ -77,118 +78,115 @@ class ApiClient {
    */
   private setupResponseInterceptor(): void {
     this.axiosInstance.interceptors.response.use(
-      (response: AxiosResponse<ApiResponse>) => {
-        console.log("[API Response Success]", {
-          status: response.status,
-          url: response.config.url,
-          data: response.data,
-        });
+      (response: AxiosResponse) => {
+        if (__DEV__) {
+          console.log("[API Response Success]", {
+            status: response.status,
+            url: response.config.url,
+            data: response.data,
+          });
+        }
+        // Return the whole response object
         return response;
       },
       async (error: AxiosError<ApiResponse>) => {
         const status = error.response?.status;
         const data = error.response?.data;
 
-        console.error("[API Response Error]", {
-          status,
-          message: data?.message || error.message,
-          code: data?.code,
-        });
+        if (__DEV__) {
+          console.error("[API Response Error]", {
+            status,
+            message: data?.message || error.message,
+            code: data?.code,
+          });
+        }
 
         // Handle different error scenarios
         switch (status) {
           case 401:
-            console.warn("[401] Unauthorized - Token expired or invalid");
-            // Clear stored token for this session
+            // Token expired or invalid, try to refresh
             try {
               const authService = await import("./auth.service");
-              await authService.clearAuthTokens();
-            } catch (error) {
-              console.error("[API] Failed to clear tokens on 401:", error);
+              // Assume refreshToken() returns a boolean or the new token
+              const refreshed = await authService.refreshToken();
+              if (refreshed) {
+                // Retry original request with new token
+                return this.axiosInstance(error.config!);
+              }
+            } catch (refreshError) {
+              // Refresh failed, force logout
+              try {
+                const authService = await import("./auth.service");
+                await authService.logout();
+              } catch (logoutError) {
+                console.error(
+                  "[API] Failed to logout after refresh failure:",
+                  logoutError,
+                );
+              }
+              return Promise.reject(refreshError);
             }
-            // TODO: Route to login screen when token expires
-            // router.replace("/(auth)/login");
             break;
-
           case 403:
-            // Forbidden - User lacks permissions
-            console.warn("[403] Forbidden - Insufficient permissions");
+            // Forbidden - user lacks permission
+            // Maybe show a "permission denied" message
             break;
-
           case 404:
             // Not Found
-            console.warn("[404] Not Found - Resource does not exist");
             break;
-
           case 500:
-            // Server Error
-            console.error("[500] Server Error - Please try again later");
+          case 502:
+          case 503:
+            // Server errors - could be temporary, maybe retry
             break;
-
-          case 429:
-            // Rate Limited
-            console.warn("[429] Rate Limited - Too many requests");
-            break;
-
-          default:
-            // Generic error handling
-            if (!status) {
-              console.error("[Network Error] No response from server");
-            }
         }
 
-        // Format error consistently
-        const formattedError: ApiError = {
-          success: false,
-          message:
-            data?.message || error.message || "An unknown error occurred",
-          error: data?.error,
-          code: data?.code || String(status),
-          status: status || 500,
-        };
-
-        return Promise.reject(formattedError);
+        // For all other errors, just reject the promise
+        return Promise.reject(error);
       },
     );
   }
 
   /**
-   * Public method to get the Axios instance
+   * Public methods for making API calls
    */
-  getClient(): AxiosInstance {
-    return this.axiosInstance;
+  public get<T = any>(
+    url: string,
+    config?: AxiosRequestConfig,
+  ): Promise<AxiosResponse<T>> {
+    return this.axiosInstance.get<T>(url, config);
   }
 
-  /**
-   * Public method to update base URL dynamically (e.g., for API switching)
-   */
-  setBaseURL(url: string): void {
-    this.axiosInstance.defaults.baseURL = url;
-    console.log("[API Client] Base URL updated to:", url);
+  public post<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig,
+  ): Promise<AxiosResponse<T>> {
+    return this.axiosInstance.post<T>(url, data, config);
   }
 
-  /**
-   * Add custom header (e.g., for language preference)
-   */
-  setHeader(key: string, value: string): void {
-    this.axiosInstance.defaults.headers.common[key] = value;
+  public patch<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig,
+  ): Promise<AxiosResponse<T>> {
+    return this.axiosInstance.patch<T>(url, data, config);
   }
 
-  /**
-   * Remove custom header
-   */
-  removeHeader(key: string): void {
-    delete this.axiosInstance.defaults.headers.common[key];
+  public put<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig,
+  ): Promise<AxiosResponse<T>> {
+    return this.axiosInstance.put<T>(url, data, config);
   }
 
-  /**
-   * Get current headers
-   */
-  getHeaders() {
-    return this.axiosInstance.defaults.headers;
+  public delete<T = any>(
+    url: string,
+    config?: AxiosRequestConfig,
+  ): Promise<AxiosResponse<T>> {
+    return this.axiosInstance.delete<T>(url, config);
   }
 }
 
-// Create and export singleton instance
-const apiClientInstance = new ApiClient();
-export const apiClient = apiClientInstance.getClient();
+export const apiClient = new ApiClient();

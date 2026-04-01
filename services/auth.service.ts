@@ -100,31 +100,6 @@ export async function verifyOtp(
 }
 
 /**
- * Refresh authentication token
- * @param refreshToken - The refresh token from previous auth
- * @returns Promise with new access token
- */
-export async function refreshAuthToken(
-  refreshToken: string,
-): Promise<ApiResponse<{ token: string; expiresIn: number }>> {
-  try {
-    const response = await apiClient.post("/auth/refresh-token", {
-      refreshToken,
-    });
-
-    // TODO: Update stored token
-    if (response.data.data?.token) {
-      // await saveAuthToken(response.data.data.token);
-    }
-
-    return response.data;
-  } catch (error) {
-    console.error("[AuthService] Refresh token failed:", error);
-    throw error;
-  }
-}
-
-/**
  * Logout user and invalidate tokens
  * @returns Promise with logout confirmation
  */
@@ -212,13 +187,15 @@ export async function clearAuthTokens(): Promise<void> {
   }
 }
 
-export default {
+const authService = {
   requestOtp,
   verifyOtp,
-  refreshAuthToken,
   logout,
   validateSession,
   saveAuthToken,
   getAuthToken,
   clearAuthTokens,
 };
+
+export default authService;
+

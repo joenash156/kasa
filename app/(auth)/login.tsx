@@ -225,9 +225,9 @@ export default function LoginScreen() {
         otp: otpCode,
       });
 
-      // Check HTTP status code (200 = success)
-      if (response && response.status === 200 && response.data?.data) {
-        const { caller_id, token } = response.data.data;
+      // Check HTTP status code (200 = success) and ensure data exists
+      if (response && response.status === 200 && response.data) {
+        const { caller_id, token } = response.data;
 
         // Use the login function from AuthContext
         await login(
@@ -248,8 +248,8 @@ export default function LoginScreen() {
       } else {
         setAlertConfig({
           visible: true,
-          title: "Error",
-          message: response?.message || "Failed to verify OTP",
+          title: "Verification Failed",
+          message: response?.message || "Failed to verify OTP. Please try again.",
           type: "error",
         });
       }
