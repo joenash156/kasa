@@ -228,23 +228,40 @@ export default function LoginScreen() {
       // Check HTTP status code (200 = success) and ensure data exists
       if (response && response.status === 200 && response.data) {
         const { caller_id, token } = response.data;
-
-        // Use the login function from AuthContext
-        await login(
-          {
-            id: caller_id ?? 1,
-            phone_number: phoneNumber,
-            country_code: "233",
-            opt_in: false,
-            interests: [],
-            call_count: 0,
-          },
-          caller_id,
-          token,
-        );
-
-        // Navigate to the main app screen (tabs)
-        router.replace("/(tabs)");
+        try {
+          // Use the login function from AuthContext
+          await login(
+            {
+              id: caller_id ?? 1,
+              phone_number: phoneNumber,
+              country_code: "233",
+              opt_in: false,
+              interests: [],
+              call_count: 0,
+            },
+            caller_id,
+            token,
+          );
+          // Navigate to the main app screen (tabs)
+          router.replace("/(tabs)");
+        } catch (loginError) {
+          console.error(
+            "Login function failed after OTP verification:",
+            loginError,
+          );
+          let loginErrorMessage = "Login failed after OTP verification.";
+          if (loginError instanceof Error) {
+            loginErrorMessage = loginError.message;
+          } else if (typeof loginError === "string") {
+            loginErrorMessage = loginError;
+          }
+          setAlertConfig({
+            visible: true,
+            title: "Login Error",
+            message: loginErrorMessage,
+            type: "error",
+          });
+        }
       } else {
         setAlertConfig({
           visible: true,
@@ -254,13 +271,28 @@ export default function LoginScreen() {
           type: "error",
         });
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("OTP verification error:", error);
+      let errorMessage = "Invalid OTP. Please try again.";
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        typeof (error as any).response === "object" &&
+        (error as any).response !== null &&
+        "data" in (error as any).response &&
+        typeof (error as any).response.data === "object" &&
+        (error as any).response.data !== null &&
+        "message" in (error as any).response.data
+      ) {
+        errorMessage = (error as any).response.data.message;
+      } else if (error instanceof Error && error.message) {
+        errorMessage = error.message;
+      }
       setAlertConfig({
         visible: true,
         title: "Error",
-        message:
-          error.response?.data?.message || "Invalid OTP. Please try again.",
+        message: errorMessage,
         type: "error",
       });
       // Reset OTP input on failure
