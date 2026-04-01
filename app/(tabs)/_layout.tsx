@@ -25,16 +25,20 @@ const TabIcon = ({ name, focused, color, size, isDarkMode }: any) => {
   }, [focused, focusedValue]);
 
   // Background pill animation
-  const animatedPillStyle = useAnimatedStyle(() => ({
-    opacity: focusedValue.value,
-    transform: [
-      { scale: interpolate(focusedValue.value, [0, 1], [0.84, 1]) },
-      { translateY: interpolate(focusedValue.value, [0, 1], [1, 0]) },
-    ],
-    backgroundColor: isDarkMode
+  const animatedPillStyle = useAnimatedStyle(() => {
+    const opacity = focusedValue.value;
+    const scale = interpolate(focusedValue.value, [0, 1], [0.84, 1]);
+    const translateY = interpolate(focusedValue.value, [0, 1], [1, 0]);
+    const backgroundColor = isDarkMode
       ? "rgba(255, 160, 82, 0.2)"
-      : "rgba(255, 176, 111, 0.27)",
-  }));
+      : "rgba(255, 176, 111, 0.27)";
+
+    return {
+      opacity,
+      transform: [{ scale }, { translateY }],
+      backgroundColor,
+    };
+  });
 
   // Outline icon opacity (fades out when focused)
   const outlineIconStyle = useAnimatedStyle(() => ({

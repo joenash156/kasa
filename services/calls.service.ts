@@ -1,5 +1,5 @@
 import { ApiResponse, CallLog, PaginatedResponse } from "@/types/api.types";
-import apiClient from "./api";
+import { apiClient } from "./api";
 
 /**
  * Call Logs Service

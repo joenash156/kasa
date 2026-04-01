@@ -3,7 +3,7 @@ import { getThemeColors } from "@/theme/colors";
 import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Link } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Dimensions,
   ImageBackground,
@@ -16,13 +16,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Animated, {
-  Easing,
-  FadeInDown,
-  useSharedValue,
-  withRepeat,
-  withTiming,
-} from "react-native-reanimated";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { ScrollGradientOverlay } from "./ScrollGradientOverlay";
 
 interface CallFormProps {
@@ -45,7 +39,6 @@ export default function CallForm({
   const { theme } = useTheme();
   const [yourNumber, setYourNumber] = useState(initialYourNumber);
   const [friendNumber, setFriendNumber] = useState("");
-  const mascotBounce = useSharedValue(0);
 
   const isDarkMode = theme === "dark";
   const colors = getThemeColors(isDarkMode);
@@ -66,14 +59,6 @@ export default function CallForm({
   };
 
   const canCall = yourNumber.length >= 9 && friendNumber.length >= 9;
-
-  useEffect(() => {
-    mascotBounce.value = withRepeat(
-      withTiming(1, { duration: 1600, easing: Easing.inOut(Easing.sin) }),
-      -1,
-      true,
-    );
-  }, [mascotBounce]);
 
   const { height } = Dimensions.get("window");
   const heroHeight = height * 0.45;

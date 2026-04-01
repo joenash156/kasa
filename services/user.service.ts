@@ -1,5 +1,5 @@
 import { ApiResponse, User } from "@/types/api.types";
-import apiClient from "./api";
+import { apiClient } from "./api";
 
 /**
  * User Service

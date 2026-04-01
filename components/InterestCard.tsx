@@ -39,23 +39,32 @@ export default function InterestCard({
     });
   }, [selected, selectedValue]);
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    backgroundColor: interpolateColor(
+  const animatedStyle = useAnimatedStyle(() => {
+    const backgroundColor = interpolateColor(
       selectedValue.value,
       [0, 1],
       [isDarkMode ? "#111827" : "#fdfdfd", "rgba(251, 146, 60, 0.18)"],
-    ),
-    borderColor: interpolateColor(
+    );
+    const borderColor = interpolateColor(
       selectedValue.value,
       [0, 1],
       [isDarkMode ? "#191f29" : "#f2f3f5", "#FB923C"],
-    ),
-    transform: [{ scale: interpolate(selectedValue.value, [0, 1], [0.985, 1]) }],
-  }));
+    );
+    const scale = interpolate(selectedValue.value, [0, 1], [0.985, 1]);
 
-  const iconScaleStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: interpolate(selectedValue.value, [0, 1], [1, 1.06]) }],
-  }));
+    return {
+      backgroundColor,
+      borderColor,
+      transform: [{ scale }],
+    };
+  });
+
+  const iconScaleStyle = useAnimatedStyle(() => {
+    const scale = interpolate(selectedValue.value, [0, 1], [1, 1.06]);
+    return {
+      transform: [{ scale }],
+    };
+  });
 
   const iconColor = selected ? "#EA580C" : isDarkMode ? "#9CA3AF" : "#6B7280";
   const textColor = selected ? "#EA580C" : isDarkMode ? "#F9FAFB" : "#111827";

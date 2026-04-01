@@ -20,9 +20,50 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import Animated, {
+  interpolateColor,
+  useAnimatedStyle,
+  useDerivedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import { getThemeColors } from "../../theme/colors";
+
+const CarouselIndicator = ({
+  index,
+  currentIndex,
+  isDarkMode,
+}: {
+  index: number;
+  currentIndex: number;
+  isDarkMode: boolean;
+}) => {
+  const isActive = useDerivedValue(() => {
+    return currentIndex === index ? 1 : 0;
+  }, [currentIndex]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const width = withTiming(isActive.value === 1 ? 20 : 8, { duration: 300 });
+    const backgroundColor = interpolateColor(
+      isActive.value,
+      [0, 1],
+      [
+        isDarkMode ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.3)",
+        isDarkMode ? "#FFFFFF" : "#000000",
+      ],
+    );
+
+    return {
+      width,
+      backgroundColor,
+      height: 8,
+      borderRadius: 4,
+    };
+  });
+
+  return <Animated.View style={animatedStyle} />;
+};
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -411,32 +452,13 @@ export default function LoginScreen() {
             </View>
 
             {/* Carousel Indicators */}
-            <View
-              className="absolute bottom-3 left-0 right-0 flex-row items-center justify-center gap-2"
-              // pointerEvents="none"
-              // style={{
-              //   bottom: 12,
-              //   position: "absolute",
-              //   flexDirection: "row",
-              //   alignItems: "center",
-              //   justifyContent: "center",
-              //   width: "100%",
-              // }}
-            >
+            <View className="absolute bottom-3 left-0 right-0 flex-row items-center justify-center gap-2">
               {heroImages.map((_, i) => (
-                <View
+                <CarouselIndicator
                   key={i}
-                  className={`rounded-full transition-all ${
-                    carouselIndex === i
-                      ? "bg-white w-5 h-2"
-                      : "bg-white/50 w-2 h-2"
-                  }`}
-                  // style={{
-                  //   opacity: carouselIndex === i ? 1 : 0.5,
-                  //   width: carouselIndex === i ? 12 : 8,
-                  //   height: carouselIndex === i ? 12 : 8,
-                  //   borderRadius: 6,
-                  // }}
+                  index={i}
+                  currentIndex={carouselIndex}
+                  isDarkMode={isDarkMode}
                 />
               ))}
             </View>
