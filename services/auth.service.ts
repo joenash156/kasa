@@ -188,11 +188,21 @@ export async function getAuthToken(): Promise<string | null> {
 export async function clearAuthTokens(): Promise<void> {
   try {
     await SecureStore.deleteItemAsync("authToken");
-    // Also clear from API client headers
-    apiClient.defaults.headers.common["Authorization"] = "";
+    
+    // Also clear from API client headers if available
+    try {
+      if (apiClient.defaults && apiClient.defaults.headers && apiClient.defaults.headers.common) {
+        apiClient.defaults.headers.common["Authorization"] = "";
+      }
+    } catch (headerError) {
+      // Ignore header clearing errors - token is already deleted from secure storage
+      console.log("[AuthService] Note: Could not clear API headers, but token was deleted");
+    }
+    
     console.log("[AuthService] Tokens cleared successfully");
   } catch (error) {
     console.error("[AuthService] Failed to clear tokens:", error);
+    // Don't throw - we want logout to continue even if clearing fails
   }
 }
 

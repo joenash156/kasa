@@ -1,10 +1,10 @@
 import { ApiResponse } from "@/types/api.types";
 import axios, {
-  AxiosError,
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
-  InternalAxiosRequestConfig,
+    AxiosError,
+    AxiosInstance,
+    AxiosRequestConfig,
+    AxiosResponse,
+    InternalAxiosRequestConfig,
 } from "axios";
 
 /**
@@ -26,6 +26,9 @@ class ApiClient {
         Accept: "application/json",
       },
     });
+
+    // Initialize defaults to reference axiosInstance.defaults
+    this.defaults = this.axiosInstance.defaults;
 
     // Setup interceptors
     this.setupRequestInterceptor();
