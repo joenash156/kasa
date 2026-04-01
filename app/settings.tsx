@@ -1,3 +1,5 @@
+import AlertModal from "@/components/AlertModal";
+
 import { ScrollGradientOverlay } from "@/components/ScrollGradientOverlay";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
@@ -5,7 +7,7 @@ import { getThemeColors } from "@/theme/colors";
 import { formatContact } from "@/utils/formatContact";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {
   Image,
   Linking,
@@ -24,6 +26,12 @@ export default function SettingsScreen() {
   const router = useRouter();
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const [alertConfig, setAlertConfig] = useState<AlertConfig>({
+    visible: false,
+    title: "",
+    message: "",
+    type: "info",
+  });
 
   const isDarkMode = theme === "dark";
   const colors = getThemeColors(isDarkMode);
@@ -38,7 +46,17 @@ export default function SettingsScreen() {
 
   const handleLogout = () => {
     logout();
-    router.push("/(auth)/login");
+    setAlertConfig({
+      visible: true,
+      title: "Logged Out",
+      message: "You have been successfully logged out.",
+      type: "success",
+    });
+  };
+
+  const handleAlertDismiss = () => {
+    setAlertConfig({ visible: false, title: "", message: "", type: "info" });
+    router.replace("/(auth)/login");
   };
 
   return (
@@ -376,6 +394,15 @@ export default function SettingsScreen() {
         </ScrollView>
         <ScrollGradientOverlay height={80} />
       </View>
+
+      {/* Alert Modal */}
+      <AlertModal
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        onDismiss={handleAlertDismiss}
+      />
     </View>
   );
 }

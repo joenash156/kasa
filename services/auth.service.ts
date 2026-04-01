@@ -44,6 +44,17 @@ export async function requestOtp(phoneNumber: string): Promise<
     return { ...response.data, status: response.status };
   } catch (error: any) {
     console.error("[AuthService] Request OTP failed:", error);
+    
+    // For network errors, don't log to console too much and provide a cleaner error
+    if (error.code === 'NETWORK_ERROR' || error.message?.includes('Network Error')) {
+      // This is likely a network connectivity issue, but OTP might have been sent
+      throw {
+        message: "Network Error",
+        code: 'NETWORK_ERROR',
+        success: false,
+      };
+    }
+    
     // Re-throw a consistent error structure
     throw (
       error.response?.data || {
@@ -113,10 +124,11 @@ export async function logout(): Promise<ApiResponse<null>> {
 
     return response.data;
   } catch (error) {
-    console.error("[AuthService] Logout failed:", error);
+    // Silent logout - don't log errors as user requested quiet logout
     // Clear tokens even if request fails
     await clearAuthTokens();
-    throw error;
+    // Return a success response to avoid breaking the flow
+    return { success: true, message: "Logged out successfully" };
   }
 }
 
