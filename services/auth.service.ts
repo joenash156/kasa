@@ -187,6 +187,21 @@ export async function clearAuthTokens(): Promise<void> {
   }
 }
 
+/**
+ * Refresh the authentication token
+ * @returns Promise<boolean> - True if token was refreshed successfully
+ */
+export async function refreshToken(): Promise<boolean> {
+  // TODO: Implement token refresh logic
+  // 1. Get refresh token from secure storage
+  // 2. Make API call to /auth/refresh-token
+  // 3. If successful, save new auth and refresh tokens
+  // 4. Return true
+  // 5. If fails, return false
+  console.warn("[AuthService] refreshToken() is not implemented.");
+  return false;
+}
+
 const authService = {
   requestOtp,
   verifyOtp,
@@ -195,7 +210,7 @@ const authService = {
   saveAuthToken,
   getAuthToken,
   clearAuthTokens,
+  refreshToken,
 };
 
 export default authService;
-

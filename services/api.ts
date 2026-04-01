@@ -2,6 +2,7 @@ import { ApiResponse } from "@/types/api.types";
 import axios, {
   AxiosError,
   AxiosInstance,
+  AxiosRequestConfig,
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
@@ -47,7 +48,7 @@ class ApiClient {
         // Using dynamic require to avoid circular dependency with auth.service
         try {
           const authService = await import("./auth.service");
-          const token = await authService.getAuthToken();
+          const token = await authService.default.getAuthToken();
           if (token) {
             config.headers.Authorization = `Bearer ${token}`;
           }
@@ -108,7 +109,7 @@ class ApiClient {
             try {
               const authService = await import("./auth.service");
               // Assume refreshToken() returns a boolean or the new token
-              const refreshed = await authService.refreshToken();
+              const refreshed = await authService.default.refreshToken();
               if (refreshed) {
                 // Retry original request with new token
                 return this.axiosInstance(error.config!);
@@ -117,7 +118,7 @@ class ApiClient {
               // Refresh failed, force logout
               try {
                 const authService = await import("./auth.service");
-                await authService.logout();
+                await authService.default.logout();
               } catch (logoutError) {
                 console.error(
                   "[API] Failed to logout after refresh failure:",

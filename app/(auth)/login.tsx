@@ -249,7 +249,8 @@ export default function LoginScreen() {
         setAlertConfig({
           visible: true,
           title: "Verification Failed",
-          message: response?.message || "Failed to verify OTP. Please try again.",
+          message:
+            response?.message || "Failed to verify OTP. Please try again.",
           type: "error",
         });
       }
