@@ -6,25 +6,25 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-    ActivityIndicator,
-    Image,
-    KeyboardAvoidingView,
-    NativeScrollEvent,
-    NativeSyntheticEvent,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    useWindowDimensions,
-    View,
+  ActivityIndicator,
+  Image,
+  KeyboardAvoidingView,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
 } from "react-native";
 import Animated, {
-    interpolateColor,
-    useAnimatedStyle,
-    useDerivedValue,
-    withTiming,
+  interpolateColor,
+  useAnimatedStyle,
+  useDerivedValue,
+  withTiming,
 } from "react-native-reanimated";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
@@ -239,16 +239,17 @@ export default function LoginScreen() {
       // not wrapped in a data object
       const top: any = response ?? null;
       const data: any = top?.data ?? top; // fallback to top if no data wrapper
-      
+
       const token: string | undefined = data?.token ?? top?.token;
       const callerIdRaw: unknown = data?.caller_id ?? top?.caller_id;
-      const callerId = typeof callerIdRaw === "number" ? callerIdRaw : Number(callerIdRaw);
+      const callerId =
+        typeof callerIdRaw === "number" ? callerIdRaw : Number(callerIdRaw);
 
       console.log("[Login] Parsed response:", {
         status: top?.status,
         token: token ? "exists" : "missing",
         callerId,
-        hasValidCallerId: Number.isFinite(callerId)
+        hasValidCallerId: Number.isFinite(callerId),
       });
 
       if (top?.status === 200 && token && Number.isFinite(callerId)) {
@@ -297,15 +298,13 @@ export default function LoginScreen() {
           token: token ? "exists" : "missing",
           callerId,
           hasValidCallerId: Number.isFinite(callerId),
-          fullResponse: top
+          fullResponse: top,
         });
-        
+
         setAlertConfig({
           visible: true,
           title: "Verification Failed",
-          message:
-            top?.message ||
-            "Failed to verify OTP. Please try again.",
+          message: top?.message || "Failed to verify OTP. Please try again.",
           type: "error",
         });
       }
@@ -384,6 +383,10 @@ export default function LoginScreen() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleBackPress = async () => {
+    router.push("/"); // Go back to the welcome screen
   };
 
   return (
@@ -533,6 +536,15 @@ export default function LoginScreen() {
                 />
               ))}
             </View>
+
+            {/* Back Button - Absolute on Carousel */}
+            <TouchableOpacity
+              onPress={handleBackPress}
+              className="absolute top-6 left-4 z-10"
+              style={{ backgroundColor: "transparent" }}
+            >
+              <Feather name="chevron-left" size={28} color="#FFFFFF" />
+            </TouchableOpacity>
           </View>
 
           {/* Form Section */}

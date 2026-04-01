@@ -11,8 +11,6 @@ export default function AuthLayout() {
       screenOptions={{
         headerShown: false,
         contentStyle: { flex: 1, backgroundColor: bg },
-        // animation: "fade_from_bottom",
-        // gestureDirection: 'horizontal',
       }}
     />
   );
