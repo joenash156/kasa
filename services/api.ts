@@ -68,24 +68,25 @@ class ApiClient {
         }
 
         // Check if this is a public endpoint
-        const isPublicEndpoint = publicEndpoints.some(
-          endpoint => config.url?.includes(endpoint)
+        const requestUrl = config.url || "";
+        const isPublicEndpoint = publicEndpoints.some(endpoint =>
+          requestUrl.includes(endpoint)
         );
 
-        // Add Bearer token if available (retrieved from secure storage)
-        // Skip authorization for public endpoints
-        if (!isPublicEndpoint) {
-          try {
-            const authService = await import("./auth.service");
-            const token = await authService.default.getAuthToken();
-            if (token) {
-              config.headers.Authorization = `Bearer ${token}`;
-              console.log("[API] Token attached to request");
-            } else {
-              console.warn("[API] No auth token found in storage");
-            }
-          } catch (error) {
-            // Token retrieval failed, continue without token
+        // For public endpoints, try to get token but don't fail if not available
+        // This allows optional authentication (e.g., /dial works both logged in and out)
+        try {
+          const authService = await import("./auth.service");
+          const token = await authService.default.getAuthToken();
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+            console.log("[API] Token attached to request");
+          } else if (!isPublicEndpoint) {
+            console.warn("[API] No auth token found for protected endpoint");
+          }
+        } catch (error) {
+          // Token retrieval failed
+          if (!isPublicEndpoint) {
             console.warn("[API] Could not retrieve auth token:", error);
           }
         }

@@ -1,10 +1,10 @@
-import { useTheme } from "@/context/ThemeContext";
-import { getThemeColors } from "@/theme/colors";
 import AlertModal, { AlertConfig } from "@/components/AlertModal";
+import { useTheme } from "@/context/ThemeContext";
+import * as callService from "@/services/call.service";
+import { getThemeColors } from "@/theme/colors";
 import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Link } from "expo-router";
-import * as callService from "@/services/call.service";
 import React, { useState } from "react";
 import {
   Dimensions,
@@ -79,21 +79,14 @@ export default function CallForm({
   const handleDial = async () => {
     if (!canCall || isDialing) return;
 
-    if (!isLoggedIn) {
-      setAlertConfig({
-        visible: true,
-        title: "Login required",
-        message:
-          "To place a call, please login so we can call you back and connect you to your destination number.",
-        type: "info",
-      });
-      return;
-    }
-
     setIsDialing(true);
     try {
       const response = await callService.dial(friendNumber);
-      const success = Boolean(response?.data?.success);
+      const success = Boolean(
+        response?.data?.success ??
+        response?.success ??
+        response?.status === 200
+      );
       const message =
         response?.data?.message ||
         response?.message ||
