@@ -85,12 +85,14 @@ export default function CallForm({
       const success = Boolean(
         response?.data?.success ??
         response?.success ??
-        response?.status === 200
+        response?.status === 200,
       );
       const message =
         response?.data?.message ||
         response?.message ||
-        (success ? "Callback initiated successfully." : "Could not initiate call.");
+        (success
+          ? "Callback initiated successfully."
+          : "Could not initiate call.");
 
       setAlertConfig({
         visible: true,
@@ -129,7 +131,7 @@ export default function CallForm({
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="on-drag"
-            contentContainerStyle={{ flexGrow: 1, paddingBottom: 60 }}
+            contentContainerStyle={{ flexGrow: 1, paddingBottom: 70 }}
           >
             <View className="flex-1">
               {/* Hero Section */}
@@ -227,6 +229,11 @@ export default function CallForm({
                       Enter both numbers to make free calls
                     </Text>
                   </View>
+                  <Text
+                    className={`mt-3 text-xs font-medium text-center ${secondaryTextColor}`}
+                  >
+                    🇬🇭 Ghanaian contacts only
+                  </Text>
                 </View>
 
                 <View
@@ -318,12 +325,6 @@ export default function CallForm({
                       {isDialing ? "Starting…" : "Start Free Call"}
                     </Text>
                   </TouchableOpacity>
-
-                  <Text
-                    className={`mt-3 text-xs font-medium text-center ${secondaryTextColor}`}
-                  >
-                    🇬🇭 Ghana only
-                  </Text>
                 </View>
               </Animated.View>
 
