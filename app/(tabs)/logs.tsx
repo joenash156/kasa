@@ -11,13 +11,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  ListRenderItem,
-  RefreshControl,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    FlatList,
+    ListRenderItem,
+    RefreshControl,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 // Helper to format API call data to LogCard format
@@ -57,7 +57,7 @@ const transformCallLog = (apiLog: CallLog): CallLogItem => {
 export default function LogsScreen() {
   const router = useRouter();
   const { theme } = useTheme();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const isDarkMode = theme === "dark";
   const colors = getThemeColors(isDarkMode);
   const primaryTextColor = isDarkMode ? "#F9FAFB" : "#111827";
@@ -82,10 +82,14 @@ export default function LogsScreen() {
     type: "info",
   });
 
-  // Fetch call logs on mount
+  // Fetch call logs on mount - only if authenticated
   useEffect(() => {
-    fetchCallLogs();
-  }, []);
+    if (isAuthenticated) {
+      fetchCallLogs();
+    } else {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
 
   const fetchCallLogs = async (page = 1, isRefresh = false) => {
     try {
@@ -116,6 +120,7 @@ export default function LogsScreen() {
   };
 
   const handleRefresh = () => {
+    if (!isAuthenticated) return;
     setRefreshing(true);
     fetchCallLogs(1, true);
   };
@@ -259,6 +264,31 @@ export default function LogsScreen() {
             className="mt-6 rounded-xl bg-orange-600 px-6 py-3"
           >
             <Text className="font-semibold text-white">Retry</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
+  // Show login prompt if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <View className={`flex-1 ${colors.bg}`}>
+        <Header
+          title="Call Logs"
+          showLogo={false}
+          onPressSettings={handleSettings}
+        />
+        <View className="flex-1 items-center justify-center px-6">
+          <Ionicons name="call-outline" size={48} color="#9CA3AF" />
+          <Text className={`mt-4 text-center text-base ${colors.text}`}>
+            Sign in to view your call history
+          </Text>
+          <TouchableOpacity
+            onPress={() => router.push("/(auth)/login")}
+            className="mt-6 rounded-xl bg-orange-600 px-6 py-3"
+          >
+            <Text className="font-semibold text-white">Sign In</Text>
           </TouchableOpacity>
         </View>
       </View>

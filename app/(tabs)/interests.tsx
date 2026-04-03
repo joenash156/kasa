@@ -2,6 +2,7 @@ import AlertModal, { AlertConfig } from "@/components/AlertModal";
 import Header from "@/components/Header";
 import InterestCard, { InterestItem } from "@/components/InterestCard";
 import { ScrollGradientOverlay } from "@/components/ScrollGradientOverlay";
+import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import userService from "@/services/user.service";
 import { getThemeColors } from "@/theme/colors";
@@ -35,6 +36,7 @@ const AVAILABLE_INTERESTS: InterestItem[] = [
 ];
 
 export default function InterestsScreen() {
+  const { user, isAuthenticated } = useAuth();
   const router = useRouter();
   const { theme } = useTheme();
   const isDarkMode = theme === "dark";
@@ -57,10 +59,14 @@ export default function InterestsScreen() {
     type: "info",
   });
 
-  // Fetch interests on mount
+  // Fetch interests on mount - only if authenticated
   useEffect(() => {
-    fetchInterests();
-  }, []);
+    if (isAuthenticated) {
+      fetchInterests();
+    } else {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
 
   const fetchInterests = useCallback(async (isRefresh = false) => {
     try {
@@ -86,6 +92,7 @@ export default function InterestsScreen() {
   }, []);
 
   const handleRefresh = () => {
+    if (!isAuthenticated) return;
     setRefreshing(true);
     fetchInterests(true);
   };
@@ -187,6 +194,31 @@ export default function InterestsScreen() {
             className="mt-6 rounded-xl bg-orange-600 px-6 py-3"
           >
             <Text className="font-semibold text-white">Retry</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
+  // Show login prompt if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <View className={`flex-1 ${colors.bg}`}>
+        <Header
+          title="Interests"
+          showLogo={false}
+          onPressSettings={handleSettings}
+        />
+        <View className="flex-1 items-center justify-center px-6">
+          <Ionicons name="heart-outline" size={48} color="#9CA3AF" />
+          <Text className={`mt-4 text-center text-base ${colors.text}`}>
+            Sign in to manage your interests
+          </Text>
+          <TouchableOpacity
+            onPress={() => router.push("/(auth)/login")}
+            className="mt-6 rounded-xl bg-orange-600 px-6 py-3"
+          >
+            <Text className="font-semibold text-white">Sign In</Text>
           </TouchableOpacity>
         </View>
       </View>

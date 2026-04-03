@@ -127,8 +127,12 @@ class ApiClient {
       async (error: AxiosError<ApiResponse>) => {
         const status = error.response?.status;
         const data = error.response?.data;
+        const requestUrl = error.config?.url || "";
 
-        if (__DEV__) {
+        // Skip error logging for logout endpoint (should be silent)
+        const isLogoutEndpoint = requestUrl.includes("/auth/logout");
+
+        if (__DEV__ && !isLogoutEndpoint) {
           console.error("[API Response Error]", {
             status,
             message: data?.message || error.message,

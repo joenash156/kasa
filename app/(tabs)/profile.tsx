@@ -11,14 +11,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Pressable,
+    RefreshControl,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 type SelectFieldProps = {
@@ -183,7 +183,7 @@ const displayToApiPhoneType = (displayValue: string): string | null => {
 export default function ProfileScreen() {
   const router = useRouter();
   const { theme } = useTheme();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const isDarkMode = theme === "dark";
   const colors = getThemeColors(isDarkMode);
   const primaryText = isDarkMode ? "#F9FAFB" : "#111827";
@@ -216,10 +216,14 @@ export default function ProfileScreen() {
   // Call stats
   const [callCount, setCallCount] = useState(0);
 
-  // Fetch user profile on mount
+  // Fetch user profile on mount - only if authenticated
   useEffect(() => {
-    fetchUserProfile();
-  }, []);
+    if (isAuthenticated) {
+      fetchUserProfile();
+    } else {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
 
   const fetchUserProfile = async (isRefresh = false) => {
     try {
@@ -248,6 +252,7 @@ export default function ProfileScreen() {
   };
 
   const handleRefresh = () => {
+    if (!isAuthenticated) return;
     setRefreshing(true);
     fetchUserProfile(true);
   };
@@ -333,6 +338,31 @@ export default function ProfileScreen() {
             className="mt-6 rounded-xl bg-orange-600 px-6 py-3"
           >
             <Text className="font-semibold text-white">Retry</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
+  // Show login prompt if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <View className={`flex-1 ${colors.bg}`}>
+        <Header
+          title="My Profile"
+          showLogo={false}
+          onPressSettings={handleSettings}
+        />
+        <View className="flex-1 items-center justify-center px-6">
+          <Ionicons name="person-outline" size={48} color="#9CA3AF" />
+          <Text className={`mt-4 text-center text-base ${colors.text}`}>
+            Sign in to view and manage your profile
+          </Text>
+          <TouchableOpacity
+            onPress={() => router.push("/(auth)/login")}
+            className="mt-6 rounded-xl bg-orange-600 px-6 py-3"
+          >
+            <Text className="font-semibold text-white">Sign In</Text>
           </TouchableOpacity>
         </View>
       </View>

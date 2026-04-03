@@ -11,18 +11,16 @@ export function ThemeAwareNavigationBar() {
     const apply = async () => {
       if (Platform.OS !== "android") return;
 
-      const navBarColor = isDarkMode ? "#030712" : "#ffffff";
       const buttonStyle: NavigationBar.NavigationBarButtonStyle = isDarkMode
         ? "light"
         : "dark";
 
       try {
-        // Required when edge-to-edge is disabled; also helps avoid OEM overrides.
-        await NavigationBar.setPositionAsync("relative");
-        await NavigationBar.setBackgroundColorAsync(navBarColor);
+        // With edge-to-edge enabled, only button style can be set
+        // Background is handled automatically by the system based on app theme
         await NavigationBar.setButtonStyleAsync(buttonStyle);
       } catch (error) {
-        console.warn("Could not set navigation bar:", error);
+        console.warn("Could not set navigation bar buttons:", error);
       }
     };
 
