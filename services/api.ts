@@ -1,10 +1,10 @@
 import { ApiResponse } from "@/types/api.types";
 import axios, {
-  AxiosError,
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
-  InternalAxiosRequestConfig,
+    AxiosError,
+    AxiosInstance,
+    AxiosRequestConfig,
+    AxiosResponse,
+    InternalAxiosRequestConfig,
 } from "axios";
 
 /**
@@ -69,8 +69,8 @@ class ApiClient {
 
         // Check if this is a public endpoint
         const requestUrl = config.url || "";
-        const isPublicEndpoint = publicEndpoints.some(endpoint =>
-          requestUrl.includes(endpoint)
+        const isPublicEndpoint = publicEndpoints.some((endpoint) =>
+          requestUrl.includes(endpoint),
         );
 
         // For public endpoints, try to get token but don't fail if not available
