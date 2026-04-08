@@ -32,7 +32,7 @@ function normalizeGhanaPhone(input: string): string {
 
   // Accept: 0XXXXXXXXX (10 digits), 233XXXXXXXXX (12 digits), or XXXXXXXXX (9 digits)
   if (digits.length === 10 && digits.startsWith("0")) {
-    return `233${digits.slice(1)}`;
+    return `0${digits.slice(1)}`;
   }
   if (digits.length === 12 && digits.startsWith("233")) {
     if (digits[3] === "0") {
@@ -44,7 +44,7 @@ function normalizeGhanaPhone(input: string): string {
   }
   // Common UX: user enters 9 digits without leading 0 (e.g. 257266272)
   if (digits.length === 9 && !digits.startsWith("0")) {
-    return `233${digits}`;
+    return `0${digits}`;
   }
 
   throw new Error(
@@ -60,10 +60,9 @@ export async function dial(
   const normalizedDestination = normalizeGhanaPhone(destination);
   const response = await apiClient.post("/dial", {
     // Send both keys for compatibility while backend contract is being aligned.
-    caller: normalizedCaller,
+    //caller: normalizedCaller,
     phone: normalizedCaller,
     destination: normalizedDestination,
   });
   return { ...response.data, status: response.status };
 }
-
