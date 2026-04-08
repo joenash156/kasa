@@ -157,10 +157,10 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="logs"
         options={{
-          title: "Logs",
+          title: "History",
           tabBarIcon: (props) => (
             <TabIcon
-              name="document-text"
+              name="archive"
               {...props}
               size={21}
               isDarkMode={isDarkMode}

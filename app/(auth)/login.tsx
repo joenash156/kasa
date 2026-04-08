@@ -145,6 +145,16 @@ export default function LoginScreen() {
     }
   }, [alertConfig.visible, pendingTabsNavigation, router]);
 
+  useEffect(() => {
+    if (step !== "otp") return;
+
+    const timer = setTimeout(() => {
+      otpInputRef.current?.focus();
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, [step]);
+
   const onHeroMomentumEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const x = e.nativeEvent.contentOffset.x;
     setCarouselIndex(
@@ -422,6 +432,7 @@ export default function LoginScreen() {
         style={{ backgroundColor: screenBgColor }}
         contentContainerStyle={{
           flexGrow: 1,
+          // paddingBottom: step === "otp" ? 24 : 24,
           paddingBottom: 24,
           backgroundColor: screenBgColor,
         }}
@@ -582,9 +593,9 @@ export default function LoginScreen() {
                       borderColor: theme === "dark" ? "#212121" : "#f5f5f5",
                     }}
                   >
-                    <Feather
-                      name="phone"
-                      size={15}
+                    <MaterialCommunityIcons
+                      name="phone-dial-outline"
+                      size={18}
                       color={colors.iconPrimary}
                     />
                     {/* <MaterialCommunityIcons name="cellphone-basic" size={20} color="#EA580C" /> */}
@@ -610,8 +621,8 @@ export default function LoginScreen() {
                         style={{ borderRadius: 20 }}
                       >
                         {/* <Feather name="phone" size={17} color="#EA580C" /> */}
-                        <MaterialCommunityIcons
-                          name="phone-classic"
+                        <Feather
+                          name="phone"
                           size={17}
                           color="rgb(236, 77, 24)"
                         />
@@ -763,11 +774,7 @@ export default function LoginScreen() {
                         borderColor: theme === "dark" ? "#212121" : "#f5f5f5",
                       }}
                     >
-                      <TouchableOpacity
-                        activeOpacity={1}
-                        onPress={() => otpInputRef.current?.focus()}
-                        className="flex-1"
-                      >
+                      <View className="flex-1 relative justify-center py-1">
                         <View className="flex-row justify-between">
                           {[0, 1, 2, 3, 4, 5].map((index) => {
                             const digit = otpCode[index] || "";
@@ -809,16 +816,19 @@ export default function LoginScreen() {
                           value={otpCode}
                           onChangeText={handleOtpChange}
                           editable={!loading}
+                          caretHidden
+                          selectionColor="transparent"
+                          showSoftInputOnFocus
                           style={{
-                            position: "absolute",
-                            opacity: 0,
-                            width: 1,
-                            height: 1,
+                            ...StyleSheet.absoluteFillObject,
+                            opacity: 0.01,
                           }}
                         />
-                      </TouchableOpacity>
+                      </View>
 
-                      <View className="h-8 w-px bg-gray-300" />
+                      <View
+                        className={`h-8 w-px ${theme === "dark" ? "bg-gray-600" : "bg-gray-300"}`}
+                      />
 
                       <View className="items-center justify-center">
                         <Text
