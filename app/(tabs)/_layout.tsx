@@ -12,8 +12,35 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
+type IoniconName = React.ComponentProps<typeof Ionicons>["name"];
+type TabIconName = "call" | "archive" | "heart" | "person";
+
+const OUTLINE_ICON_NAME: Record<TabIconName, IoniconName> = {
+  call: "call-outline",
+  archive: "archive-outline",
+  heart: "heart-outline",
+  person: "person-outline",
+};
+
+type TabBarIconProps = {
+  focused: boolean;
+  color: string;
+  size: number;
+};
+
+type TabIconProps = TabBarIconProps & {
+  name: TabIconName;
+  isDarkMode: boolean;
+};
+
 // Tab Icon Component with smooth overlay animation
-const TabIcon = ({ name, focused, color, size, isDarkMode }: any) => {
+const TabIcon = ({
+  name,
+  focused,
+  color,
+  size,
+  isDarkMode,
+}: TabIconProps) => {
   const focusedValue = useSharedValue(focused ? 1 : 0);
 
   // Update focused value without triggering render reads
@@ -70,7 +97,7 @@ const TabIcon = ({ name, focused, color, size, isDarkMode }: any) => {
       <Animated.View
         style={[StyleSheet.absoluteFill, styles.iconCentered, outlineIconStyle]}
       >
-        <Ionicons name={`${name}-outline` as any} size={size} color={color} />
+        <Ionicons name={OUTLINE_ICON_NAME[name]} size={size} color={color} />
       </Animated.View>
 
       {/* Filled Icon (Fades in when focused) */}
@@ -149,7 +176,7 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: "Call",
-          tabBarIcon: (props) => (
+          tabBarIcon: (props: TabBarIconProps) => (
             <TabIcon name="call" {...props} size={21} isDarkMode={isDarkMode} />
           ),
         }}
@@ -158,7 +185,7 @@ export default function TabsLayout() {
         name="logs"
         options={{
           title: "History",
-          tabBarIcon: (props) => (
+          tabBarIcon: (props: TabBarIconProps) => (
             <TabIcon
               name="archive"
               {...props}
@@ -172,7 +199,7 @@ export default function TabsLayout() {
         name="interests"
         options={{
           title: "Interests",
-          tabBarIcon: (props) => (
+          tabBarIcon: (props: TabBarIconProps) => (
             <TabIcon
               name="heart"
               {...props}
@@ -186,7 +213,7 @@ export default function TabsLayout() {
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: (props) => (
+          tabBarIcon: (props: TabBarIconProps) => (
             <TabIcon
               name="person"
               {...props}
