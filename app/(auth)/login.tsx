@@ -93,6 +93,7 @@ export default function LoginScreen() {
   const [pendingOtpNavigation, setPendingOtpNavigation] = useState(false);
   const [pendingTabsNavigation, setPendingTabsNavigation] = useState(false);
   const heroScrollRef = useRef<ScrollView>(null);
+  const otpInputRef = useRef<TextInput>(null);
 
   const phoneDigits = phoneNumber.replace(/\D/g, "");
   const canSendOtp = phoneDigits.length >= 9;
@@ -198,7 +199,7 @@ export default function LoginScreen() {
       }
     } catch (error: any) {
       console.error("OTP request error:", error);
-      
+
       // Check if this is a network error but OTP might have been sent
       // If the error message contains "Network Error" but the user should still proceed
       if (error.message && error.message.includes("Network Error")) {
@@ -207,7 +208,8 @@ export default function LoginScreen() {
         setAlertConfig({
           visible: true,
           title: "OTP Sent",
-          message: "OTP sent to your phone number (connection issue detected, but OTP should be delivered)",
+          message:
+            "OTP sent to your phone number (connection issue detected, but OTP should be delivered)",
           type: "success",
         });
       } else {
@@ -761,27 +763,70 @@ export default function LoginScreen() {
                         borderColor: theme === "dark" ? "#212121" : "#f5f5f5",
                       }}
                     >
-                      <View className="flex-1 flex-row items-center">
+                      <TouchableOpacity
+                        activeOpacity={1}
+                        onPress={() => otpInputRef.current?.focus()}
+                        className="flex-1"
+                      >
+                        <View className="flex-row justify-between">
+                          {[0, 1, 2, 3, 4, 5].map((index) => {
+                            const digit = otpCode[index] || "";
+                            const isFilled = Boolean(digit);
+                            return (
+                              <View
+                                key={index}
+                                className="h-12 w-10 items-center justify-center rounded-lg"
+                                style={{
+                                  borderWidth: 1,
+                                  borderColor: isFilled
+                                    ? "#EA580C"
+                                    : theme === "dark"
+                                      ? "#374151"
+                                      : "#D1D5DB",
+                                  backgroundColor:
+                                    theme === "dark" ? "#0F172A" : "#FFFFFF",
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontSize: 20,
+                                    fontWeight: "700",
+                                    color: inputTextColor,
+                                  }}
+                                >
+                                  {digit ? (showOtp ? digit : "•") : ""}
+                                </Text>
+                              </View>
+                            );
+                          })}
+                        </View>
                         <TextInput
-                          placeholder="••••••"
+                          ref={otpInputRef}
                           autoComplete="sms-otp"
                           textContentType="oneTimeCode"
-                          placeholderTextColor={
-                            theme === "dark" ? "#6B7280" : "#9CA3AF"
-                          }
                           keyboardType="number-pad"
                           maxLength={6}
-                          style={{
-                            fontSize: 26,
-                            letterSpacing: 8,
-                            color: inputTextColor,
-                          }}
-                          className={`flex-1 py-3 font-bold ${colors.inputText} text-center`}
                           value={otpCode}
                           onChangeText={handleOtpChange}
                           editable={!loading}
-                          secureTextEntry={!showOtp}
+                          style={{
+                            position: "absolute",
+                            opacity: 0,
+                            width: 1,
+                            height: 1,
+                          }}
                         />
+                      </TouchableOpacity>
+
+                      <View className="h-8 w-px bg-gray-300" />
+
+                      <View className="items-center justify-center">
+                        <Text
+                          className={`text-[10px] font-semibold ${colors.textSecondary}`}
+                          style={{ color: textSecondary }}
+                        >
+                          {otpCode.length}/6
+                        </Text>
                       </View>
                       <TouchableOpacity
                         onPress={() => setShowOtp(!showOtp)}
@@ -816,7 +861,7 @@ export default function LoginScreen() {
                     }}
                   >
                     <Text
-                      className={`flex-1 text-xs ${colors.textSecondary}`}
+                      className={`flex-1 text-xs text-center ${colors.textSecondary}`}
                       style={{ color: textSecondary }}
                     >
                       Check your SMS for the 6-digit code

@@ -1,10 +1,10 @@
 import { ApiResponse } from "@/types/api.types";
 import axios, {
-    AxiosError,
-    AxiosInstance,
-    AxiosRequestConfig,
-    AxiosResponse,
-    InternalAxiosRequestConfig,
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
 } from "axios";
 
 /**
