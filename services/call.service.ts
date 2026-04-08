@@ -27,26 +27,43 @@ export async function getCallLogs(
   }
 }
 
-function normalizeGhanaDestination(input: string): string {
+function normalizeGhanaPhone(input: string): string {
   const digits = input.replace(/\D/g, "");
 
-  // Accept: 0XXXXXXXXX (10 digits) or 233XXXXXXXXX (12 digits)
+  // Accept: 0XXXXXXXXX (10 digits), 233XXXXXXXXX (12 digits), or XXXXXXXXX (9 digits)
   if (digits.length === 10 && digits.startsWith("0")) {
     return `233${digits.slice(1)}`;
   }
   if (digits.length === 12 && digits.startsWith("233")) {
+    if (digits[3] === "0") {
+      throw new Error(
+        "Provide a valid phone number (e.g. 0xxxxxxxxx or 233xxxxxxxxx)",
+      );
+    }
     return digits;
   }
   // Common UX: user enters 9 digits without leading 0 (e.g. 257266272)
-  if (digits.length === 9) {
+  if (digits.length === 9 && !digits.startsWith("0")) {
     return `233${digits}`;
   }
-  return digits;
+
+  throw new Error(
+    "Provide a valid phone number (e.g. 0xxxxxxxxx or 233xxxxxxxxx)",
+  );
 }
 
-export async function dial(destination: string): Promise<DialResponse> {
-  const normalized = normalizeGhanaDestination(destination);
-  const response = await apiClient.post("/dial", { destination: normalized });
+export async function dial(
+  caller: string,
+  destination: string,
+): Promise<DialResponse> {
+  const normalizedCaller = normalizeGhanaPhone(caller);
+  const normalizedDestination = normalizeGhanaPhone(destination);
+  const response = await apiClient.post("/dial", {
+    // Send both keys for compatibility while backend contract is being aligned.
+    caller: normalizedCaller,
+    phone: normalizedCaller,
+    destination: normalizedDestination,
+  });
   return { ...response.data, status: response.status };
 }
 

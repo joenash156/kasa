@@ -39,7 +39,23 @@ export default function CallForm({
   headerComponent,
 }: CallFormProps) {
   const { theme } = useTheme();
-  const [yourNumber, setYourNumber] = useState(initialYourNumber);
+  const normalizeLocalInput = (value: string) => {
+    const digits = value.replace(/[^0-9]/g, "");
+    if (digits.length === 12 && digits.startsWith("233")) {
+      return digits.slice(3);
+    }
+    if (digits.length === 10 && digits.startsWith("0")) {
+      return digits;
+    }
+    if (digits.length === 9) {
+      return digits;
+    }
+    return digits.slice(0, 10);
+  };
+
+  const [yourNumber, setYourNumber] = useState(
+    normalizeLocalInput(initialYourNumber),
+  );
   const [friendNumber, setFriendNumber] = useState("");
   const [isDialing, setIsDialing] = useState(false);
   const [alertConfig, setAlertConfig] = useState<AlertConfig>({
@@ -60,14 +76,22 @@ export default function CallForm({
   } = colors;
 
   const handleYourNumber = (text: string) => {
-    setYourNumber(text.replace(/[^0-9]/g, ""));
+    setYourNumber(normalizeLocalInput(text));
   };
 
   const handleFriendNumber = (text: string) => {
-    setFriendNumber(text.replace(/[^0-9]/g, ""));
+    setFriendNumber(normalizeLocalInput(text));
   };
 
-  const canCall = yourNumber.length >= 9 && friendNumber.length >= 9;
+  const isValidLocal = (value: string) => {
+    const digits = value.replace(/[^0-9]/g, "");
+    return (
+      (digits.length === 9 && !digits.startsWith("0")) ||
+      (digits.length === 10 && digits.startsWith("0"))
+    );
+  };
+
+  const canCall = isValidLocal(yourNumber) && isValidLocal(friendNumber);
 
   const { height } = Dimensions.get("window");
   const heroHeight = height * 0.45;
@@ -81,7 +105,7 @@ export default function CallForm({
 
     setIsDialing(true);
     try {
-      const response = await callService.dial(friendNumber);
+      const response = await callService.dial(yourNumber, friendNumber);
       const success = Boolean(
         response?.data?.success ??
         response?.success ??
@@ -260,7 +284,7 @@ export default function CallForm({
                       style={{ fontSize: 16 }}
                       value={yourNumber}
                       onChangeText={handleYourNumber}
-                      maxLength={9}
+                      maxLength={10}
                       editable={true}
                     />
                   </View>
@@ -291,7 +315,7 @@ export default function CallForm({
                       style={{ fontSize: 16 }}
                       value={friendNumber}
                       onChangeText={handleFriendNumber}
-                      maxLength={9}
+                      maxLength={10}
                     />
                   </View>
                 </View>
