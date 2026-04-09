@@ -211,6 +211,109 @@ export default function SettingsScreen() {
             </View>
           </View>
 
+          {/* Legal Section */}
+          <View className="px-3 pt-8">
+            <Text
+              className={`text-sm font-semibold uppercase tracking-wider ${secondaryTextColor} mb-3`}
+            >
+              Legal
+            </Text>
+
+            <View
+              className={`rounded-2xl overflow-hidden ${cardBg}`}
+              style={{
+                borderWidth: 1,
+                borderColor: isDarkMode ? "#212121" : "#f7f7f7",
+              }}
+            >
+              {/* Privacy Policy */}
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => router.push("/(legal)/privacy")}
+                className={`flex-row items-center justify-between px-3 py-4`}
+              >
+                <View className="flex-1 flex-row items-center gap-3">
+                  <View className="h-10 w-10 items-center justify-center rounded-full bg-purple-100">
+                    <Ionicons
+                      name="shield-checkmark"
+                      size={20}
+                      color="#8B5CF6"
+                    />
+                  </View>
+                  <View className="flex-1">
+                    <Text className={`text-sm font-semibold ${textColor}`}>
+                      Privacy Policy
+                    </Text>
+                    <Text className={`text-xs mt-0.5 ${secondaryTextColor}`}>
+                      How we handle your data
+                    </Text>
+                  </View>
+                </View>
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color={isDarkMode ? "#666" : "#ccc"}
+                />
+              </TouchableOpacity>
+
+              {/* Terms of Use */}
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => router.push("/(legal)/terms")}
+                className={`flex-row items-center justify-between px-3 py-4`}
+              >
+                <View className="flex-1 flex-row items-center gap-3">
+                  <View className="h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+                    <Ionicons name="document-text" size={20} color="#3B82F6" />
+                  </View>
+                  <View className="flex-1">
+                    <Text className={`text-sm font-semibold ${textColor}`}>
+                      Terms of Use
+                    </Text>
+                    <Text className={`text-xs mt-0.5 ${secondaryTextColor}`}>
+                      App usage guidelines
+                    </Text>
+                  </View>
+                </View>
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color={isDarkMode ? "#666" : "#ccc"}
+                />
+              </TouchableOpacity>
+
+              {/* Data & Compliance */}
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => router.push("/(legal)/data")}
+                className={`flex-row items-center justify-between px-3 py-4`}
+              >
+                <View className="flex-1 flex-row items-center gap-3">
+                  <View className="h-10 w-10 items-center justify-center rounded-full bg-green-100">
+                    <Ionicons
+                      name="information-circle-outline"
+                      size={20}
+                      color="#10B981"
+                    />
+                  </View>
+                  <View className="flex-1">
+                    <Text className={`text-sm font-semibold ${textColor}`}>
+                      Data & Compliance
+                    </Text>
+                    <Text className={`text-xs mt-0.5 ${secondaryTextColor}`}>
+                      Security & compliance info
+                    </Text>
+                  </View>
+                </View>
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color={isDarkMode ? "#666" : "#ccc"}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+
           {/* Contact Section */}
           <View className="px-3 pt-8">
             <Text
@@ -393,7 +496,7 @@ export default function SettingsScreen() {
         </ScrollView>
         <ScrollGradientOverlay height={80} />
       </View>
-      
+
       {/* Alert Modal */}
       <AlertModal
         visible={alertConfig.visible}
