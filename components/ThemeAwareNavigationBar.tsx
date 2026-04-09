@@ -11,16 +11,27 @@ export function ThemeAwareNavigationBar() {
     const apply = async () => {
       if (Platform.OS !== "android") return;
 
+      // Set background color based on APP THEME (not device theme)
+      const backgroundColor = isDarkMode ? "#030712" : "#ffffff";
+
+      // Set button style for visibility
       const buttonStyle: NavigationBar.NavigationBarButtonStyle = isDarkMode
         ? "light"
         : "dark";
 
       try {
-        // With edge-to-edge enabled, only button style can be set
-        // Background is handled automatically by the system based on app theme
+        // Only set background color if edge-to-edge is not enabled
+        // setBackgroundColorAsync is not supported with edge-to-edge enabled
+        await NavigationBar.setBackgroundColorAsync(backgroundColor);
         await NavigationBar.setButtonStyleAsync(buttonStyle);
       } catch (error) {
-        console.warn("Could not set navigation bar buttons:", error);
+        // If setBackgroundColorAsync fails (likely due to edge-to-edge),
+        // try setting button style only to at least respect the theme colors
+        try {
+          await NavigationBar.setButtonStyleAsync(buttonStyle);
+        } catch (e) {
+          console.warn("Could not set navigation bar style:", e);
+        }
       }
     };
 

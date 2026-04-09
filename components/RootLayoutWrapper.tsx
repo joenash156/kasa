@@ -33,6 +33,7 @@ export default function RootLayoutWrapper() {
         <SafeAreaView
           edges={["top", "left", "right", "bottom"]}
           className="flex-1"
+          style={{ backgroundColor: bgColor }}
         >
           {/* TODO: Add loading spinner here */}
         </SafeAreaView>
@@ -45,6 +46,7 @@ export default function RootLayoutWrapper() {
       <SafeAreaView
         edges={["top", "left", "right", "bottom"]}
         className={`flex-1 ${colors.bg}`}
+        style={{ backgroundColor: bgColor }}
       >
         <InitialLayout />
       </SafeAreaView>
