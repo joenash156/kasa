@@ -1,7 +1,20 @@
 import { useTheme } from "@/context/ThemeContext";
-import * as NavigationBar from "expo-navigation-bar";
+import { requireNativeModule } from "expo-modules-core";
 import { useEffect } from "react";
-import { AppState, Platform } from "react-native";
+import { AppState, Platform, processColor } from "react-native";
+
+type NavigationBarButtonStyle = "light" | "dark";
+
+type ExpoNavigationBarModule = {
+  setBackgroundColorAsync: (color: ReturnType<typeof processColor>) => Promise<void>;
+  setButtonStyleAsync: (style: NavigationBarButtonStyle) => Promise<void>;
+  setPositionAsync?: (position: "relative" | "absolute") => Promise<void>;
+};
+
+const ExpoNavigationBar =
+  Platform.OS === "android"
+    ? requireNativeModule<ExpoNavigationBarModule>("ExpoNavigationBar")
+    : null;
 
 export function ThemeAwareNavigationBar() {
   const { theme } = useTheme();
@@ -9,27 +22,23 @@ export function ThemeAwareNavigationBar() {
 
   useEffect(() => {
     const apply = async () => {
-      if (Platform.OS !== "android") return;
+      if (Platform.OS !== "android" || !ExpoNavigationBar) return;
 
-      // Set background color based on APP THEME (not device theme)
-      // const backgroundColor = isDarkMode ? "#030712" : "#ffffff";
-
-      // Set button style for visibility
-      const buttonStyle: NavigationBar.NavigationBarButtonStyle = isDarkMode
+      const backgroundColor = isDarkMode ? "#030712" : "#ffffff";
+      const buttonStyle: NavigationBarButtonStyle = isDarkMode
         ? "light"
         : "dark";
 
       try {
-        // Only set background color if edge-to-edge is not enabled
-        // setBackgroundColorAsync is not supported with edge-to-edge enabled
-        //await NavigationBar.setBackgroundColorAsync(backgroundColor);
-        await NavigationBar.setButtonStyleAsync(buttonStyle);
-      } catch {
-        // If setBackgroundColorAsync fails (likely due to edge-to-edge),
-        // try setting button style only to at least respect the theme colors
+        await ExpoNavigationBar.setPositionAsync?.("relative");
+        await ExpoNavigationBar.setBackgroundColorAsync(
+          processColor(backgroundColor)
+        );
+        await ExpoNavigationBar.setButtonStyleAsync(buttonStyle);
+      } catch (e) {
         try {
-          await NavigationBar.setButtonStyleAsync(buttonStyle);
-        } catch (e) {
+          await ExpoNavigationBar.setButtonStyleAsync(buttonStyle);
+        } catch {
           console.warn("Could not set navigation bar style:", e);
         }
       }
