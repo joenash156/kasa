@@ -132,7 +132,7 @@ export default function SettingsScreen() {
               className={`rounded-2xl overflow-hidden ${cardBg}`}
               style={{
                 borderWidth: 1,
-                borderColor: isDarkMode ? "#212121" : "#f7f7f7",
+                borderColor: isDarkMode ? "#0d0d0d" : "#f7f7f7",
               }}
             >
               {/* User Info */}
@@ -184,7 +184,7 @@ export default function SettingsScreen() {
               className={`rounded-2xl overflow-hidden ${cardBg}`}
               style={{
                 borderWidth: 1,
-                borderColor: isDarkMode ? "#212121" : "#f7f7f7",
+                borderColor: isDarkMode ? "#0d0d0d" : "#f7f7f7",
               }}
               >
               <TouchableOpacity
@@ -264,7 +264,7 @@ export default function SettingsScreen() {
               className={`rounded-2xl overflow-hidden ${cardBg}`}
               style={{
                 borderWidth: 1,
-                borderColor: isDarkMode ? "#212121" : "#f7f7f7",
+                borderColor: isDarkMode ? "#0d0d0d" : "#f7f7f7",
               }}
             >
               {/* Privacy Policy */}
@@ -367,7 +367,7 @@ export default function SettingsScreen() {
               className={`rounded-2xl overflow-hidden ${cardBg}`}
               style={{
                 borderWidth: 1,
-                borderColor: isDarkMode ? "#212121" : "#f7f7f7",
+                borderColor: isDarkMode ? "#0d0d0d" : "#f7f7f7",
               }}
             >
               {/* Email */}
@@ -436,7 +436,7 @@ export default function SettingsScreen() {
               className={`rounded-2xl overflow-hidden ${cardBg}`}
               style={{
                 borderWidth: 1,
-                borderColor: isDarkMode ? "#212121" : "#f7f7f7",
+                borderColor: isDarkMode ? "#0d0d0d" : "#f7f7f7",
               }}
             >
               {/* App Name */}
@@ -530,7 +530,7 @@ export default function SettingsScreen() {
                 dlp africa
               </Text>
             </View>
-            <Text className={`text-xs text-center mt-1 ${secondaryTextColor}`}>
+            <Text className={`text-xs text-center mt-1 pb-10 ${secondaryTextColor}`}>
               © 2026 All rights reserved
             </Text>
           </View>
@@ -573,7 +573,7 @@ export default function SettingsScreen() {
             style={{
               paddingBottom: Math.max(insets.bottom, 20),
               borderTopWidth: 1,
-              borderColor: isDarkMode ? "#212121" : "#E5E7EB",
+              borderColor: isDarkMode ? "#141414" : "#fafafa",
             }}
           >
             <View className="items-center pb-4">
